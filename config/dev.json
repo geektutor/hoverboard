@@ -1,0 +1,17 @@
+{
+    "basepath": "/",
+    "url": "https://thenextconf-dev.firebaseapp.com/",
+    "analytics": "UA-43643469-8",
+    "prefix": "/",
+    "firebase": {
+      "apiKey": "AIzaSyCQyWuTe1eIVBGGJ4Uu_BJuXsyxhq9vet8",
+      "appId": "1:1031367289534:web:074b0075bf0fe91fa30cef",
+      "authDomain": "thenextconf-dev.firebaseapp.com",
+      "databaseURL": "https://thenextconf-dev.firebaseio.com",
+      "messagingSenderId": "1031367289534",
+      "projectId": "thenextconf-dev",
+      "storageBucket": "thenextconf-dev.appspot.com"
+    },
+    "googleMapApiKey": "AIzaSyBu9LI-hY4NfUOPJJKuV3BfQm7edLr2-aE"
+  }
+  

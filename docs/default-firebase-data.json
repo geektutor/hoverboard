@@ -127,33 +127,6 @@
             }
           ],
           "startTime": "15:30"
-        },
-        {
-          "endTime": "15:00",
-          "sessions": [
-            {
-              "items": [103]
-            }
-          ],
-          "startTime": "14:00"
-        },
-        {
-          "endTime": "15:30",
-          "sessions": [
-            {
-              "items": [134]
-            }
-          ],
-          "startTime": "15:00"
-        },
-        {
-          "endTime": "16:30",
-          "sessions": [
-            {
-              "items": [104]
-            }
-          ],
-          "startTime": "15:30"
         }
       ],
       "tracks": [
@@ -252,7 +225,7 @@
           "endTime": "15:00",
           "sessions": [
             {
-              "items": [108]
+              "items": []
             }
           ],
           "startTime": "14:00"
@@ -261,7 +234,7 @@
           "endTime": "15:30",
           "sessions": [
             {
-              "items": [107]
+              "items": []
             }
           ],
           "startTime": "15:00"
@@ -270,7 +243,7 @@
           "endTime": "17:00",
           "sessions": [
             {
-              "items": [137]
+              "items": [138]
             }
           ],
           "startTime": "16:30"
@@ -366,17 +339,17 @@
       "title": "Opening Keynote from the President"
     },
     "134": {
-      "description": "Coffeeeeeee!",
+      "description": "Sli.do Game",
       "icon": "coffee-break",
       "image": "https://firebasestorage.googleapis.com/v0/b/hoverboard-experimental.appspot.com/o/images%2Fbackgrounds%2Fcoffee-break.jpg?alt=media&token=7c2c929b-cb94-4be8-a05a-b3f678136cb7",
-      "title": "Coffee break"
+      "title": "Win amazing prizes in our live quiz"
     },
     "136": {
-      "description": "Official start of the conference. Greetings from the organizers, sponsors and partners.",
+      "description": "Keynote from The Chair",
       "icon": "opening",
       "image": "https://firebasestorage.googleapis.com/v0/b/hoverboard-experimental.appspot.com/o/images%2Fbackgrounds%2Fopening.jpg?alt=media&token=aa52dd45-50c9-4e36-9485-c1f9138ecd6b",
       "language": "English",
-      "title": "The Next Conference Opening Keynote"
+      "title": "The Next Conference Keynote"
     },
     "137": {
       "description": "Afterparty is a great time to have some fun and meet new people",
@@ -553,6 +526,26 @@
           "title": "Logistics"
         },
         {
+          "name": "Ezike Kodinnanma",
+          "photo": "/images/people/Kodi.jpeg",
+          "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/Kodi.jpeg",
+          "socials": [
+            {
+              "icon": "instagram",
+              "link": "https://www.instagram.com/kodi_ezzy",
+              "name": "Instagram"
+            },
+             {
+              "icon": "twitter",
+              "link": "https://twitter.com/kodi_ezzy",
+              "name": "Twitter"
+            }
+            
+          ],
+          "order": 10,
+          "title": "Finance"
+        },
+        {
           "name": "Daniel Ejalonibu",
           "photo": "/images/people/Ejalonibu.jpeg",
           "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/Ejalonibu.jpeg",
@@ -569,7 +562,7 @@
             }
             
           ],
-          "order": 10,
+          "order": 11,
           "title": "Content and Publicity"
         }
       ],
