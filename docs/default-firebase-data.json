@@ -365,18 +365,34 @@
   },
   "speakers": {
     "erioluwa_adeyinka": {
-      "bio": "African Coordinator for SDGs ACTs- Entrepreneurship skills",
+      "bio": "Erioluwa is an educator with active experience working on various education projects with social businesses, NGOs and the government both home and abroad. He holds an Advanced Bachelor in Managing Business Abroad, from the Utrecht School of Economics in Netherlands, a certificate of Civil Society Leadership and Management from YALI Regional Leadership Centre Accra, Ghana. A participant of the Leading Change Institute Nigeria organized by the Staley School of Leadership Studies, Kansas State University. He is competent in organizational leadership, strategy consulting, business and product development, quality assurance in education, curriculum development for 21st century learners, assessments and standards for 21st century students, project management skills.",
       "company": "SDGs ACTs-Entrepreneurship",
-      "companyLogo": "s",
+      "companyLogo": "",
       "companyLogoUrl": "",
       "country": "Lagos, Nigeria",
       "featured": true,
       "name": "Erioluwa Adeyinka",
-      "photo": "/images/people/erioluwa.jpg",
+      "photo": "/images/people/eri.jpg",
       "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/eri.jpg",
       "pronouns": "he/him",
-      "shortBio": "African Coordinator for SDGs ACTs- Entrepreneurship skills",
-      "socials": [],
+      "shortBio": "Erioluwa is an educator with active experience working on various education projects with social businesses, NGOs and the government both home and abroad.",
+      "socials": [
+        {
+          "icon": "twitter",
+          "link": "https://twitter.com/erioluwabolu",
+          "name": "Twitter"
+        },
+        {
+          "icon": "linkedin",
+          "link": "Erioluwa Adeyinka",
+          "name": "LinkedIn"
+        },
+        {
+          "icon": "instagram",
+          "link": "https://instagram.com/erioluwaadeyinka",
+          "name": "Instagram"
+        }
+      ],
       "order": 0,
       "title": "Educator"
     },
@@ -393,6 +409,29 @@
       "pronouns": "he/him",
       "shortBio": "",
       "socials": [
+       
+      ],
+      "order": 1,
+      "title": ""
+    },
+    "adejoro_oluwashola": {
+      "bio": "Chief Executive Officer at De-Miropass Technologies Limited",
+      "company": "",
+      "companyLogo": "",
+      "companyLogoUrl": "",
+      "country": "Lagos, Nigeria",
+      "featured": true,
+      "name": "Adejoro Oluwashola",
+      "photo": "/images/people/adejoro.jpg",
+      "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/adejoro.jpg",
+      "pronouns": "he/him",
+      "shortBio": "Chief Executive Officer at De-Miropass Technologies Limited",
+      "socials": [
+        {
+          "icon": "linkedin",
+          "link": "https://www.linkedin.com/in/adejoro-oluwashola",
+          "name": "LinkedIn"
+        }
       ],
       "order": 1,
       "title": ""

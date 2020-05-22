@@ -37,6 +37,7 @@ import { ReduxMixin } from './mixins/redux-mixin';
 import './pages/blog-page';
 import './pages/coc-page';
 import './pages/faq-page';
+import './pages/register-page';
 import './pages/home-page';
 import './pages/previous-speakers-page';
 import './pages/schedule-page';
@@ -221,6 +222,7 @@ class HoverboardApp extends ReduxMixin(PolymerElement) {
             <schedule-page name="schedule" route="[[subRoute]]"></schedule-page>
             <speakers-page name="speakers" route="[[subRoute]]"></speakers-page>
             <team-page name="team"></team-page>
+            <register-page name="register"></register-page>
             <faq-page name="faq"></faq-page>
             <coc-page name="coc"></coc-page>
           </iron-pages>

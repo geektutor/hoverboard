@@ -39,9 +39,9 @@
       "label": "Team"
     },
     {
-      "route": "blog",
-      "permalink": "https://t.me/tncinfo",
-      "label": "Get Notified"
+      "route": "register",
+      "permalink": "/register",
+      "label": "Register"
     }
   ],
   "heroSettings": {
