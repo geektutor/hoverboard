@@ -90,7 +90,7 @@ class FooterRel extends PolymerElement {
         <div class="col-heading">{$ subscribe $}</div>
         <span>{$ subscribeNote $}</span>
         <paper-button class="cta-button animated icon-right" role="button" tabindex="0" animated="" elevation="0" aria-disabled="false">
-          <a href="https://t.me/thenextconf">Subscribe</a>
+          <a href="https://t.me/tncinfo">Subscribe</a>
           <iron-icon icon="hoverboard:arrow-right-circle"></iron-icon>
         </paper-button>
       </div>
