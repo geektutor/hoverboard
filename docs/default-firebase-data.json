@@ -79,6 +79,12 @@
       "logos": [
         {
           "order": 0,
+          "logoUrl": "../images/logos/kb.png",
+          "name": "KwaraBuild",
+          "url": "https://www.kwarabuild.com"
+        },
+        {
+          "order": 1,
           "logoUrl": "../images/logos/google.svg",
           "name": "Johnny Media",
           "url": "https://www.google.com.ua/intl/en/about/"
@@ -358,7 +364,7 @@
       "title": "Afterparty & Networking"
     },
     "138": {
-      "description": "Make sure you won't miss closing ceremony, all gifts from out sponsors and partners will find their owners during this session.",
+      "description": "Make sure you don't miss the closing ceremony, stand a chance to win gifts and amazing prizes from our sponsors and partners during this session.",
       "image": "https://firebasestorage.googleapis.com/v0/b/hoverboard-experimental.appspot.com/o/images%2Fbackgrounds%2Fclosing.jpg?alt=media&token=f02d014a-09ee-407e-88c7-b74093e00fed",
       "title": "Conference closing and contest winners announcements"
     }
@@ -372,7 +378,7 @@
       "country": "Lagos, Nigeria",
       "featured": true,
       "name": "Erioluwa Adeyinka",
-      "photo": "/images/people/eri.jpg",
+      "photo": "/images/people/erioluwa.jpg",
       "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/eri.jpg",
       "pronouns": "he/him",
       "shortBio": "Erioluwa is an educator with active experience working on various education projects with social businesses, NGOs and the government both home and abroad.",
