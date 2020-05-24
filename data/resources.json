@@ -99,18 +99,18 @@
       "featuredSessions": {
         "description": "The NeXt Conference brings together people who shape the future of Work for 4 days of sessions, workshops and networking. Described by many as 'NeXt Conference', our team creates a Conference where we all can meet up for inspiration and experience sharing.",
         "label": "Know more",
-        "link": "https://www.youtube.com/watch?v=D93rTGn1Mls&feature=youtu.be"
+        "link": "https://youtu.be/SJs7iTjEzvw"
       },
       "howItWas": {
         "description": "Described by many as 'ECX',our team creates a Conference where we all can meet up for inspiration and experience sharing",
         "label": "See how it was in 2019",
-        "youtubeId": "D93rTGn1Mls"
+        "youtubeId": "SJs7iTjEzvw"
       }
     },
     "statisticsBlock": {
       "attendees": {
         "label": "Attendees",
-        "number": "900"
+        "number": "400"
       },
       "days": {
         "label": "Days",
@@ -145,10 +145,10 @@
     "toast": "We will contact you soon!"
   },
   "featuredVideos": {
-    "title": "ECX' featured videos",
+    "title": "ECX featured videos",
     "callToAction": {
       "label": "See all videos",
-      "link": "https://www.youtube.com/watch?v=D93rTGn1Mls&feature=youtu.be"
+      "link": "https://youtu.be/SJs7iTjEzvw"
     }
   },
   "blog": {
