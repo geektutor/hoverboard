@@ -85,9 +85,9 @@
         },
         {
           "order": 1,
-          "logoUrl": "../images/logos/google.svg",
+          "logoUrl": "../images/logos/jonny.png",
           "name": "Johnny Media",
-          "url": "https://www.google.com.ua/intl/en/about/"
+          "url": "https://wa.me/2348186492645?text=Hello!%20I%20am%20interested%20in%20one%20of%20your%20products"
         }
       ],
       "order": 1,
@@ -380,7 +380,7 @@
       "name": "Chrismarcel James",
       "photo": "/images/people/james.jpg",
       "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/james.jpg",
-      "pronouns": "he/him",
+      "pronouns": "",
       "shortBio": "A front-end developer with about 3+ years of experience building amazing User Interfaces Experiences on the web.",
       "socials": [
         {
@@ -409,7 +409,7 @@
     },
     "ngozi_john": {
       "bio": "Ngozi JOHN-UYAH is a consummate Communicator, linguist, Administrator, Art Manager and Public Relations and Protocol expert. With over 25 years work experience in Nigeria’s Public Service, she has served in various departments and capacities. She has undertaken numerous adhoc assignments within and outside Nigeria and has received several commendations (verbal and written) from high ranking government officials and Ambassadors of foreign missions in Nigeria. Ngozi’s core values are honesty, tenacity, loyalty and hardwork. She has excellent interpersonal skills and relates very well with very many high ranking government officials, politicians, Ambassadors/diplomats, Captains of industry, persons of influence at the upper echelon of Nigerian society as well as well people across all strata of society. Ngozi is widely travelled and has visited many countries in Africa, Europe, Asia and America both for work and leisure. Her present position is Director of the North Central Zonal Directorate of Nigeria’s National Gallery of Art (NGA). As Director, NGA North Central Zonal Directorate, she supervises close to 300 staff members in NGA offices in the FCT and the 6 states of Nigeria’s North Central geopolitical zone. Ngozi is an alumna of the International Visitor Leadership Program (IVLP) of the United States of America Department of State. She sits on the Boards of four (4) International Foundations, two of which are concerned with cultural diplomacy and the promotion of the visual arts; one attending to the care and wellbeing of aged and ageing persons and the last one, with imparting leadership skills and high moral and ethical values in youths. Ngozi is an incurable optimist, a God lover and an unrepentant patriot. She loves writing, reading, travelling, mentoring and music. She is a mother of four beautiful daughters and a host of other children, some of whom she adopted and some others who adopted her.",
-      "company": "Director of the North Central Zonal Directorate of Nigeria’s National Gallery of Art (NGA)",
+      "company": "",
       "companyLogo": "",
       "companyLogoUrl": "",
       "country": "Lagos, Nigeria",
@@ -417,7 +417,7 @@
       "name": "Ngozi JOHN-UYAH",
       "photo": "/images/people/ngozi.jpg",
       "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/ngozi.jpg",
-      "pronouns": "her",
+      "pronouns": "",
       "shortBio": "Ngozi JOHN-UYAH is a consummate Communicator, linguist, Administrator, Art Manager and Public Relations and Protocol expert.",
       "socials": [
         {
@@ -445,11 +445,11 @@
       "companyLogo": "",
       "companyLogoUrl": "",
       "country": "Lagos, Nigeria",
-      "featured": true,
+      "featured": false,
       "name": "Erioluwa Adeyinka",
       "photo": "/images/people/erioluwa.jpg",
       "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/eri.jpg",
-      "pronouns": "he/him",
+      "pronouns": "",
       "shortBio": "Educator | Strategist",
       "socials": [
         {
@@ -477,16 +477,43 @@
       "companyLogo": "",
       "companyLogoUrl": "",
       "country": "Lagos, Nigeria",
-      "featured": true,
+      "featured": false,
       "name": "Nnamdi Orji",
       "photo": "/images/people/orji.jpeg",
       "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/orji.jpeg",
-      "pronouns": "he/him",
+      "pronouns": "",
       "shortBio": "",
       "socials": [
        
       ],
       "order": 3,
+      "title": ""
+    },
+    "abdul_adenike": {
+      "bio": "Abdul Adenike is a sales enthusiast with over 2 years of experience working across diverse sectors within Nigeria, on Sales related assignments covering strategy and field works. An Undergraduate of Human Kinetics and health education University of Lagos, Nigeria. She has gained and seeked knowledge in various fields of interest over the last 5 years and pursued her passion in diversified environment. She’s currently the Sales and Marketing officer at Palmary travels and tours a travel, tours & Destination Management Company that specialises in corporate, educational, entertainment, individual and family cruise. She is also the Content Creator for Marketing and communications AIESEC (In Nigeria) the largest youth run organization in the world that activates leadership through cross cultural exchanges and practical experiences in challenging environments. She also presently holds a role as the Chief Financial Officer AIESEC Lagos a sub division of AIESEC( in Nigeria) driven by the same cause all around the world. Abdul Adenike, Believes in pursuing one's passion irrespective of your course of study and be equipped in diverse knowledge. She is a strong advocate for striving for excellence",
+      "company": "",
+      "companyLogo": "",
+      "companyLogoUrl": "",
+      "country": "Lagos, Nigeria",
+      "featured": true,
+      "name": "Addul Adenike",
+      "photo": "/images/people/abdul.jpg",
+      "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/abdul.jpg",
+      "pronouns": "",
+      "shortBio": "Chief FINANCIAL OFFICER, AIESEC Lagos",
+      "socials": [
+        {
+          "icon": "linkedin",
+          "link": "http://linkedin.com/in/abdul-adenike-181aa8b6",
+          "name": "LinkedIn"
+        },
+        {
+          "icon": "instagram",
+          "link": "http://www.instagram.com/ahna_nike",
+          "name": "Instagram"
+        }
+      ],
+      "order": 4,
       "title": ""
     },
     "prosper_michael": {
@@ -499,7 +526,7 @@
       "name": "Prosper Michael Ametu",
       "photo": "/images/people/prosper.jpeg",
       "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/prosper.jpeg",
-      "pronouns": "he/him",
+      "pronouns": "",
       "shortBio": "Prosper Michael Ametu is a young Ghanaian Poet, Public Speaker and Debater. He developed his speaking skills through the fine art of debating and public speaking.",
       "socials": [
         {
@@ -522,11 +549,11 @@
       "companyLogo": "",
       "companyLogoUrl": "",
       "country": "Lagos, Nigeria",
-      "featured": false,
+      "featured": true,
       "name": "Adejoro Oluwashola",
       "photo": "/images/people/adejoro.jpg",
       "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/adejoro.jpg",
-      "pronouns": "he/him",
+      "pronouns": "",
       "shortBio": "Chief Executive Officer at De-Miropass Technologies Limited",
       "socials": [
         {
