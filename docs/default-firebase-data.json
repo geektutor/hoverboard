@@ -484,7 +484,11 @@
       "pronouns": "",
       "shortBio": "",
       "socials": [
-       
+        {
+          "icon": "linkedin",
+          "link": "http://www.linkedin.com/in/nnamdiorji",
+          "name": "LinkedIn"
+        }       
       ],
       "order": 3,
       "title": ""
@@ -564,6 +568,38 @@
       ],
       "order": 5,
       "title": ""
+    },
+    "sheriff_gbadamosi": {
+      "bio": "Sheriff Gbadamosi is the executive director at Halliday Consulting, an IT company, focused on tech-based solutions for start-ups, health, education and non-profits organisations industries. He has a decade of experience working with government and International organizations on community development projects. He's currently the director of programs at Sustainable Development Goals Awareness Initiative, Nigeria",
+      "company": "Halliday Consulting",
+      "companyLogo": "",
+      "companyLogoUrl": "",
+      "country": "Lagos, Nigeria",
+      "featured": false,
+      "name": "Sheriff Gbadamosi",
+      "photo": "/images/people/sheriff.jpg",
+      "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/sheriff.jpg",
+      "pronouns": "",
+      "shortBio": "",
+      "socials": [
+        {
+        "icon": "twitter",
+        "link": "https://twitter.com/hallidayinc",
+        "name": "Twitter"
+      },
+        {
+          "icon": "linkedin",
+          "link": "https://www.linkedin.com/in/gbadamosi-sheriff",
+          "name": "LinkedIn"
+        },
+        {
+          "icon": "instagram",
+          "link": "https://www.instagram.com/lagossdgsact",
+          "name": "Instagram"
+        }
+      ],
+      "order": 5,
+      "title": "Consultant"
     }
   },
   "team": [
