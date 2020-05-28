@@ -39,8 +39,13 @@
       "label": "Team"
     },
     {
+      "route": "live",
+      "permalink": "http://ecx.website/live/",
+      "label": "Live"
+    },
+    {
       "route": "register",
-      "permalink": "/register",
+      "permalink": "http://ecx.website/tnc",
       "label": "Register"
     }
   ],

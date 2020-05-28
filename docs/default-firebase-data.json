@@ -85,6 +85,12 @@
         },
         {
           "order": 1,
+          "logoUrl": "../images/logos/paadc.png",
+          "name": "PAADC",
+          "url": "https://paadc.com"
+        },
+        {
+          "order": 2,
           "logoUrl": "../images/logos/jonny.png",
           "name": "Johnny Media",
           "url": "https://wa.me/2348186492645?text=Hello!%20I%20am%20interested%20in%20one%20of%20your%20products"
@@ -212,7 +218,7 @@
           "endTime": "16:30",
           "sessions": [
             {
-              "items": [106]
+              "items": [107]
             }
           ],
           "startTime": "15:30"
@@ -231,19 +237,28 @@
           "endTime": "15:00",
           "sessions": [
             {
-              "items": []
+              "items": [106]
             }
           ],
           "startTime": "14:00"
         },
         {
-          "endTime": "15:30",
+          "endTime": "15:10",
           "sessions": [
             {
-              "items": []
+              "items": [130]
             }
           ],
           "startTime": "15:00"
+        },
+        {
+          "endTime": "16:30",
+          "sessions": [
+            {
+              "items": [108]
+            }
+          ],
+          "startTime": "15:30"
         },
         {
           "endTime": "17:00",
@@ -277,7 +292,7 @@
       "complexity": "Beginner",
       "description": ["In this session, you'll be taught;", "Various CV writing techniques.", "Importance of a LinkedIn profile.", "Highlighting your language skills.", "Describing your experiance with action verbs.", "Keywords to be used when writing a CV.", "Difference between CV and resume.", "Common pitfalls when writing a CV."],
       "language": "English",
-      "speakers": ["Striking CV Geek"],
+      "speakers": ["Striking CV"],
       "tags": ["Soft Skill"],
       "title": "How to craft your CV like a pro"
     },
@@ -291,7 +306,7 @@
       "title": "Imposter syndrome and ways to overcome it"
     },
     "104": {
-      "complexity": "Beginner",
+      "complexity": "",
       "description": "A detailed session on the effects of depression and how to be free from depression.",
       "language": "English",
       "presentation": "#",
@@ -301,11 +316,11 @@
       "videoId": "fLfQNp75kbc"
     },
     "105": {
-      "complexity": "Intermediate",
+      "complexity": "",
       "description": ["How to excel at public speaking while getting rid of your fear of speaking in public and learning how to speak with confidence on occasion.", "How to organize your public speaking presentation so that it is easy to remember when you are making your speech.", "The blue print for creating excellent powerpoint/keynote slides which also tell you what to write in your speech.", "How to answer any questions during your speech's Q&A session."],
       "language": "English",
       "presentation": "#",
-      "speakers": ["Damola"],
+      "speakers": ["Prosper"],
       "tags": ["Soft Skill"],
       "title": "Excelling at public speaking and presentation",
       "videoId": "e3cuSz1hEPs"
@@ -315,28 +330,36 @@
       "description": "Legit strategies to make money online",
       "language": "English",
       "presentation": "#",
-      "speakers": ["Adebayo Adegbiji"],
+      "speakers": ["Adejoro Oluwashola"],
       "tags": ["Soft Skill"],
       "title": "Leveraging tech to build wealth",
       "videoId": "qK7ysoohsaM"
     },
     "107": {
       "complexity": "Beginner",
-      "description": "Developer Relations Regional Lead",
-      "extend": 2,
+      "description": "",
       "language": "English",
-      "speaker": ["TBD"],
+      "presentation": "#",
+      "speakers": ["Erioluwa Adeyinka"],
       "tags": ["Soft Skill"],
-      "title": "Founder"
+      "title": "Entrepreneurial Skills",
+      "videoId": "qK7ysoohsaM"
     },
     "108": {
       "complexity": "Beginner",
-      "description": "Developer Relations Regional Lead",
-      "extend": 2,
+      "description": "How to negotiate like a PRO",
       "language": "English",
-      "speaker": ["TBD"],
-      "tags": ["Soft Skill"],
-      "title": "Founder"
+      "presentation": "#",
+      "speakers": ["Abdul Adenike"],
+      "tags": ["Soft Skills"],
+      "title": "Negotiation Skills",
+      "videoId": "qK7ysoohsaM"
+    },
+    "130": {
+      "description": "PAADC",
+      "icon": "coffee-break",
+      "image": "https://firebasestorage.googleapis.com/v0/b/hoverboard-experimental.appspot.com/o/images%2Fbackgrounds%2Fcoffee-break.jpg?alt=media&token=7c2c929b-cb94-4be8-a05a-b3f678136cb7",
+      "title": "PAADC Covid-19 Innovation Challenge"
     },
     "132": {
       "description": "Grab a seat, get ready and be set to go",
@@ -345,7 +368,7 @@
       "title": "Opening Keynote from the President"
     },
     "134": {
-      "description": "Sli.do Game",
+      "description": "Sli.do Game Code - 2730",
       "icon": "coffee-break",
       "image": "https://firebasestorage.googleapis.com/v0/b/hoverboard-experimental.appspot.com/o/images%2Fbackgrounds%2Fcoffee-break.jpg?alt=media&token=7c2c929b-cb94-4be8-a05a-b3f678136cb7",
       "title": "Win amazing prizes in our live quiz"
