@@ -838,6 +838,26 @@
           ],
           "order": 13,
           "title": "Hackathon"
+        },
+        {
+          "name": "Douye Tungbulu",
+          "photo": "/images/people/douye.jpg",
+          "photoUrl": "https://github.com/geektutor/hoverboard/raw/master/images/people/douye.jpg",
+          "socials": [
+            {
+              "icon": "instagram",
+              "link": "https://www.instagram.com/tunzpr",
+              "name": "Instagram"
+            },
+             {
+              "icon": "twitter",
+              "link": "https://twitter.com/tunzdev",
+              "name": "Twitter"
+            }
+            
+          ],
+          "order": 14,
+          "title": "Content and Publicity"
         }
       ],
       "title": "Planning Committee"
