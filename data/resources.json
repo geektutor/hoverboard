@@ -268,16 +268,16 @@
         "description": "Engineering Career Expo is a platform established to create an environment of interaction between students and industry based personnel so as to empower them with relevant skills in the engineering field",
         "callToAction": {
           "label": "Read more",
-          "link": "https://ecx.website/",
+          "link": "https://ecx.org.ng/2021",
           "newTab": true
         }
       },
       {
-        "title": "What is NeXt Conference",
-        "description": "The NeXt Conference is a platform that brings together people who shape the future of Work for 4 days of sessions, workshops and networking. Described by many as 'NeXt Conference', our team creates a Conference where we all can meet up for inspiration and experience sharing.",
+        "title": "Read Our ECX 2.0 Story",
+        "description": "The ECX Grand Finale 2021 is to celebrate all the successes we've seen accross all of ECX initiatives and bla bla",
         "callToAction": {
           "label": "Read more",
-          "link": "https://ecx.website/",
+          "link": "https://ecx.org.ng/story",
           "newTab": true
         }
       }
