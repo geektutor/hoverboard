@@ -2,11 +2,11 @@
 
 ### Dates and Location
 
-The NeXt Conference will take place on the 27th-30th of May on [The Next Conference Web App](www.thenextconf.web.app)
+The ECX Finale 2021 will take place on the 15th-17th of July on [ECX Web App](www.ecxfinale2021.web.app)
 
 ### Stay Informed
 
-To stay up to date on the latest information on sessions, speakers, and activities, be sure to visit the [ECX website](https://ecx.website/next), and follow us on [Instagram](https://www.instagram.com/ecxunilag) and [Twitter](https://twitter.com/ecxunilag). You can also follow and join the social conversation about The Next Conference via official hashtags #TheNextConf.
+To stay up to date on the latest information on sessions, speakers, and activities, be sure to visit the [ECX website](https://ecx.org.ng/finale), and follow us on [Instagram](https://www.instagram.com/ecxunilag) and [Twitter](https://twitter.com/ecxunilag). You can also follow and join the social conversation about The ECX Finale 2021 via official hashtags #ECXFinale2021.
 
 ### Content Formats
 
@@ -18,7 +18,7 @@ All the lectures from the sessions will be live on The ECX youtube channel [yout
 
 ## Registration
 
-Register on ECX website (https://ecx.website/next)
+Register on ECX website (https://ecx.org.ng/finale)
 
 ### Registration Terms & Conditions
 
@@ -26,5 +26,5 @@ Register on ECX website (https://ecx.website/next)
 
 ### Language
 
-All presentations at The Next Conference will be in English.
+All presentations at The ECX Finale 2021 will be in English.
 
