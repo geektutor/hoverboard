@@ -1,17 +1,16 @@
 {
     "basepath": "/",
-    "url": "https://thenextconf.firebaseapp.com/",
+    "url": "https://ecxfinale2021.firebaseapp.com/",
     "analytics": "",
     "prefix": "/",
     "firebase": {
-      "apiKey": "AIzaSyAeg943F93QgJWVr1YQcNizlldOO2KKJjs",
-      "appId": "1:425598303186:web:1defc6e520eed0f64b260b",
-      "authDomain": "thenextconf.firebaseapp.com",
-      "databaseURL": "https://thenextconf.firebaseio.com",
-      "messagingSenderId": "425598303186",
-      "projectId": "thenextconf",
-      "storageBucket": "thenextconf.appspot.com"
+      "apiKey": "AIzaSyD22VUMRSq4skthTHMFB1wSEuxL732_pZQ",
+      "appId": "1:177635348429:web:093cef6994bff759f27e84",
+      "authDomain": "ecxfinale2021.firebaseapp.com",
+      "databaseURL": "https://ecxfinale2021.firebaseio.com",
+      "messagingSenderId": "177635348429",
+      "projectId": "ecxfinale2021",
+      "storageBucket": "ecxfinale2021.appspot.com"
     },
     "googleMapApiKey": "AIzaSyBu9LI-hY4NfUOPJJKuV3BfQm7edLr2-aE"
   }
-  
