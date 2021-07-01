@@ -1,9 +1,9 @@
 {
-  "title": "The NeXt Conference",
-  "description": "The NeXt Conference brings together people who shape the future of Work for 4 days of sessions, workshops and networking. Described by many as 'NeXt Conference', our team creates a Conference where we all can meet up for inspiration and experience sharing.",
+  "title": "ECX Finale 2021 - Moving Forward",
+  "description": "ECX Finale 2021 brings together people who shape the future of Work for 3 days of sessions, workshops and networking. Described by many as 'Moving Forward', our team creates a Conference where we all can meet up for inspiration and experience sharing.",
   "image": "images/social-share.jpg",
-  "keywords": "event, TheNeXtConf, ECX, ECX Conference, The NeXt Conference , programming, UNILAG, ULES",
-  "dates": "May 27-30, 2020",
+  "keywords": "event, GrandFinale, ECX, ECX Conference, Moving Forward , programming, UNILAG, ULES",
+  "dates": "July 15-17, 2021",
   "partnershipProposition": "mailto:ecxunilag@gmail.com",
   "share": "Share",
   "followOur": "Follow our",
@@ -37,7 +37,7 @@
       "links": [
         {
           "name": "ECX",
-          "url": "https://ecx.website/",
+          "url": "https://ecx.org.ng/",
           "newTab": true
         },
         {
@@ -97,7 +97,7 @@
     "title": "About",
     "callToAction": {
       "featuredSessions": {
-        "description": "The NeXt Conference brings together people who shape the future of Work for 4 days of sessions, workshops and networking. Described by many as 'NeXt Conference', our team creates a Conference where we all can meet up for inspiration and experience sharing.",
+        "description": "ECX Finale 2021 brings together people who shape the future of Work for 3 days of sessions, workshops and networking. Described by many as 'Moving Forward', our team creates a Conference where we all can meet up for inspiration and experience sharing.",
         "label": "Know more",
         "link": "https://youtu.be/SJs7iTjEzvw"
       },
@@ -114,11 +114,11 @@
       },
       "days": {
         "label": "Days",
-        "number": "4"
+        "number": "3"
       },
       "sessions": {
         "label": "Sessions",
-        "number": "10"
+        "number": "12"
       },
       "tracks": {
         "label": "Tracks",
