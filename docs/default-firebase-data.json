@@ -102,7 +102,7 @@
           "endTime": "5:00",
           "sessions": [
             {
-              "items": [132]
+              "items": [101]
             }
           ],
           "startTime": "4:00"
@@ -111,7 +111,7 @@
           "endTime": "5:15",
           "sessions": [
             {
-              "items": [101]
+              "items": [130]
             }
           ],
           "startTime": "5:00"
@@ -120,7 +120,7 @@
           "endTime": "6:15",
           "sessions": [
             {
-              "items": [134]
+              "items": [102]
             }
           ],
           "startTime": "5:15"
@@ -129,7 +129,7 @@
           "endTime": "9:15",
           "sessions": [
             {
-              "items": [102]
+              "items": [132]
             }
           ],
           "startTime": "8:15"
@@ -157,7 +157,7 @@
           "endTime": "5:15",
           "sessions": [
             {
-              "items": [134]
+              "items": [130]
             }
           ],
           "startTime": "5:00"
@@ -175,7 +175,7 @@
           "endTime": "9:15",
           "sessions": [
             {
-              "items": [104]
+              "items": [132]
             }
           ],
           "startTime": "8:15"
@@ -194,7 +194,7 @@
           "endTime": "11:15",
           "sessions": [
             {
-              "items": [136]
+              "items": [105]
             }
           ],
           "startTime": "11:00"
@@ -203,7 +203,7 @@
           "endTime": "11:35",
           "sessions": [
             {
-              "items": [105]
+              "items": [106]
             }
           ],
           "startTime": "11:15"
@@ -212,7 +212,7 @@
           "endTime": "11:45",
           "sessions": [
             {
-              "items": [134]
+              "items": [130]
             }
           ],
           "startTime": "11:35"
@@ -230,7 +230,7 @@
           "endTime": "12:30",
           "sessions": [
             {
-              "items": [107]
+              "items": [108]
             }
           ],
           "startTime": "11:55"
@@ -239,7 +239,7 @@
           "endTime": "12:35",
           "sessions": [
             {
-              "items": [107]
+              "items": [130]
             }
           ],
           "startTime": "12:30"
@@ -248,7 +248,7 @@
           "endTime": "1:30",
           "sessions": [
             {
-              "items": [107]
+              "items": [111]
             }
           ],
           "startTime": "12:35"
@@ -257,7 +257,7 @@
           "endTime": "1:40",
           "sessions": [
             {
-              "items": [107]
+              "items": [112]
             }
           ],
           "startTime": "1:30"
@@ -273,91 +273,111 @@
   "sessions": {
     "101": {
       "complexity": "Beginner",
-      "description": "A very important session aimed at highlighting top essential skills that will be required in the post covid era's workspace.",
+      "description": " ",
       "language": "English",
       "presentation": "#",
-      "speakers": ["Daniel"],
+      "speakers": [" "],
       "tags": ["Soft Skill"],
-      "title": "Skills to learn during this pandemic"
+      "title": "Getting Started with Gatsby: Build your First Static Site"
     },
     "102": {
       "complexity": "Beginner",
-      "description": ["In this session, you'll be taught;", "Various CV writing techniques.", "Importance of a LinkedIn profile.", "Highlighting your language skills.", "Describing your experiance with action verbs.", "Keywords to be used when writing a CV.", "Difference between CV and resume.", "Common pitfalls when writing a CV."],
+      "description": " ",
       "language": "English",
-      "speakers": ["Striking CV"],
+      "presentation": "#",
+      "speakers": [" "],
       "tags": ["Soft Skill"],
-      "title": "How to craft your CV like a pro"
+      "title": "Getting Started with Technical Writing (Documentation)"
     },
     "103": {
       "complexity": "Intermediate",
-      "description": "Explaining imposter syndrome and how to overcome it and be on top of your game.",
+      "description": " ",
       "language": "English",
       "presentation": "#",
-      "speakers": ["Chris Marcel"],
+      "speakers": [" "],
       "tags": ["Soft Skill"],
-      "title": "Imposter syndrome and ways to overcome it"
+      "title": "Fundamentals of Digital Marketing"
     },
     "104": {
       "complexity": "",
-      "description": "A detailed session on the effects of depression and how to be free from depression.",
+      "description": " ",
       "language": "English",
       "presentation": "#",
-      "speakers": ["Ms. Ngozi John-Uyah"],
+      "speakers": [" "],
       "tags": ["Soft Skill"],
-      "title": "How to overcome depression",
-      "videoId": "fLfQNp75kbc"
+      "title": "Bots Mastery: Getting Started with Bot Development (Python)",
+      "videoId": " "
     },
     "105": {
       "complexity": "",
-      "description": ["How to excel at public speaking while getting rid of your fear of speaking in public and learning how to speak with confidence on occasion.", "How to organize your public speaking presentation so that it is easy to remember when you are making your speech.", "The blue print for creating excellent powerpoint/keynote slides which also tell you what to write in your speech.", "How to answer any questions during your speech's Q&A session."],
+      "description": " ",
       "language": "English",
       "presentation": "#",
-      "speakers": ["Prosper"],
-      "tags": ["Soft Skill"],
-      "title": "Excelling at public speaking and presentation",
-      "videoId": "e3cuSz1hEPs"
+      "speakers": [" "],
+      "title": "VC/Dean Speech",
+      "videoId": ""
     },
     "106": {
       "complexity": "Beginner",
-      "description": "Legit strategies to make money online",
+      "description": " ",
       "language": "English",
       "presentation": "#",
-      "speakers": ["Adejoro Oluwashola"],
-      "tags": ["Soft Skill"],
-      "title": "Leveraging tech to build wealth",
-      "videoId": "qK7ysoohsaM"
+      "speakers": [" "],
+      "tags": ["Keynote"],
+      "title": "Moving Forward: How do we proceed from here as students",
+      "videoId": " "
     },
     "107": {
       "complexity": "Beginner",
       "description": "",
       "language": "English",
       "presentation": "#",
-      "speakers": ["Erioluwa Adeyinka"],
-      "tags": ["Soft Skill"],
-      "title": "Entrepreneurial Skills",
-      "videoId": "qK7ysoohsaM"
+      "speakers": [" "],
+      "tags": ["Presentation"],
+      "title": "ECX Story",
+      "videoId": " "
     },
     "108": {
       "complexity": "Beginner",
-      "description": "How to negotiate like a PRO",
+      "description": " ",
       "language": "English",
       "presentation": "#",
-      "speakers": ["Abdul Adenike"],
-      "tags": ["Soft Skills"],
-      "title": "Negotiation Skills",
-      "videoId": "qK7ysoohsaM"
+      "speakers": [" "],
+      "tags": [" "],
+      "title": "Panel",
+      "videoId": " "
+    },
+    "111": {
+      "complexity": "Beginner",
+      "description": " ",
+      "language": "English",
+      "presentation": "#",
+      "speakers": [" "],
+      "tags": [" "],
+      "title": "Workshop",
+      "videoId": " "
+    },
+    "112": {
+      "complexity": "Beginner",
+      "description": " ",
+      "language": "English",
+      "presentation": "#",
+      "speakers": [" "],
+      "tags": [" "],
+      "title": "Award Wall + Closing Speech",
+      "videoId": " "
     },
     "130": {
-      "description": "PAADC",
+      "description": "",
       "icon": "coffee-break",
-      "image": "https://firebasestorage.googleapis.com/v0/b/hoverboard-experimental.appspot.com/o/images%2Fbackgrounds%2Fcoffee-break.jpg?alt=media&token=7c2c929b-cb94-4be8-a05a-b3f678136cb7",
-      "title": "PAADC Covid-19 Innovation Challenge"
+      "image": " ",
+      "title": "Break"
     },
     "132": {
-      "description": "Grab a seat, get ready and be set to go",
+      "description": "",
       "icon": "registration",
-      "image": "https://firebasestorage.googleapis.com/v0/b/hoverboard-experimental.appspot.com/o/images%2Fbackgrounds%2Fregistration.jpg?alt=media&token=27328646-d323-4cca-904c-75f021bc3ffe",
-      "title": "Opening Keynote from the President"
+      "image": " ",
+      "title": "Game Night"
     },
     "134": {
       "description": "Sli.do Game Code - 2730",
