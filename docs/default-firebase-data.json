@@ -101,44 +101,44 @@
     }
   ],
   "schedule": {
-    "2020-05-27": {
-      "dateReadable": "May 27",
+    "2021-07-15": {
+      "dateReadable": "July 15",
       "timeslots": [
         {
-          "endTime": "14:00",
+          "endTime": "5:00",
           "sessions": [
             {
               "items": [132]
             }
           ],
-          "startTime": "13:30"
+          "startTime": "4:00"
         },
         {
-          "endTime": "15:00",
+          "endTime": "5:15",
           "sessions": [
             {
               "items": [101]
             }
           ],
-          "startTime": "14:00"
+          "startTime": "5:00"
         },
         {
-          "endTime": "15:30",
+          "endTime": "6:15",
           "sessions": [
             {
               "items": [134]
             }
           ],
-          "startTime": "15:00"
+          "startTime": "5:15"
         },
         {
-          "endTime": "16:30",
+          "endTime": "9:15",
           "sessions": [
             {
               "items": [102]
             }
           ],
-          "startTime": "15:30"
+          "startTime": "8:15"
         }
       ],
       "tracks": [
@@ -147,35 +147,44 @@
         }
       ]
     },
-    "2020-05-28": {
-      "dateReadable": "May 28",
+    "2021-07-16": {
+      "dateReadable": "July 16",
       "timeslots": [
         {
-          "endTime": "15:00",
+          "endTime": "5:00",
           "sessions": [
             {
               "items": [103]
             }
           ],
-          "startTime": "14:00"
+          "startTime": "4:00"
         },
         {
-          "endTime": "15:30",
+          "endTime": "5:15",
           "sessions": [
             {
               "items": [134]
             }
           ],
-          "startTime": "15:00"
+          "startTime": "5:00"
         },
         {
-          "endTime": "16:30",
+          "endTime": "6:15",
           "sessions": [
             {
               "items": [104]
             }
           ],
-          "startTime": "15:30"
+          "startTime": "5:15"
+        },
+        {
+          "endTime": "9:15",
+          "sessions": [
+            {
+              "items": [104]
+            }
+          ],
+          "startTime": "8:15"
         }
       ],
       "tracks": [
@@ -184,96 +193,85 @@
         }
       ]
     },
-    "2020-05-29": {
-      "dateReadable": "May 29",
+    "2021-07-17": {
+      "dateReadable": "July 17",
       "timeslots": [
         {
-          "endTime": "14:00",
+          "endTime": "11:15",
           "sessions": [
             {
               "items": [136]
             }
           ],
-          "startTime": "13:30"
+          "startTime": "11:00"
         },
         {
-          "endTime": "15:00",
+          "endTime": "11:35",
           "sessions": [
             {
               "items": [105]
             }
           ],
-          "startTime": "14:00"
+          "startTime": "11:15"
         },
         {
-          "endTime": "15:30",
+          "endTime": "11:45",
           "sessions": [
             {
               "items": [134]
             }
           ],
-          "startTime": "15:00"
+          "startTime": "11:35"
         },
         {
-          "endTime": "16:30",
+          "endTime": "11:55",
           "sessions": [
             {
               "items": [107]
             }
           ],
-          "startTime": "15:30"
+          "startTime": "11:45"
+        },
+        {
+          "endTime": "12:30",
+          "sessions": [
+            {
+              "items": [107]
+            }
+          ],
+          "startTime": "11:55"
+        },
+        {
+          "endTime": "12:35",
+          "sessions": [
+            {
+              "items": [107]
+            }
+          ],
+          "startTime": "12:30"
+        },
+        {
+          "endTime": "1:30",
+          "sessions": [
+            {
+              "items": [107]
+            }
+          ],
+          "startTime": "12:35"
+        },
+        {
+          "endTime": "1:40",
+          "sessions": [
+            {
+              "items": [107]
+            }
+          ],
+          "startTime": "1:30"
         }
       ],
       "tracks": [
         {
           "title": "Day 3"
-        }
-      ]
-    },
-    "2020-05-30": {
-      "dateReadable": "May 30",
-      "timeslots": [
-        {
-          "endTime": "15:00",
-          "sessions": [
-            {
-              "items": [106]
-            }
-          ],
-          "startTime": "14:00"
-        },
-        {
-          "endTime": "15:10",
-          "sessions": [
-            {
-              "items": [130]
-            }
-          ],
-          "startTime": "15:00"
-        },
-        {
-          "endTime": "16:30",
-          "sessions": [
-            {
-              "items": [108]
-            }
-          ],
-          "startTime": "15:30"
-        },
-        {
-          "endTime": "17:00",
-          "sessions": [
-            {
-              "items": [138]
-            }
-          ],
-          "startTime": "16:30"
-        }
-      ],
-      "tracks": [
-        
-        {
-          "title": "Day 4"
         }
       ]
     }
