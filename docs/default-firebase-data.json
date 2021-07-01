@@ -79,21 +79,15 @@
       "logos": [
         {
           "order": 0,
-          "logoUrl": "../images/logos/kb.png",
-          "name": "KwaraBuild",
-          "url": "https://www.kwarabuild.com"
+          "logoUrl": "../images/logos/sca.png",
+          "name": "SCA Unilag",
+          "url": "https://www.twitter.com/scaunilag"
         },
         {
           "order": 1,
-          "logoUrl": "../images/logos/paadc.png",
-          "name": "PAADC",
-          "url": "https://paadc.com"
-        },
-        {
-          "order": 2,
-          "logoUrl": "../images/logos/jonny.png",
-          "name": "Johnny Media",
-          "url": "https://wa.me/2348186492645?text=Hello!%20I%20am%20interested%20in%20one%20of%20your%20products"
+          "logoUrl": "../images/logos/dsc.png",
+          "name": "DSC Unilag",
+          "url": "https://dscunilag.dev"
         }
       ],
       "order": 1,
