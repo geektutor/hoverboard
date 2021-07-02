@@ -1,39 +1,34 @@
-import { speakersActions } from '../redux/actions';
-import { store } from '../redux/store';
+import { Pending } from '@abraham/remotedata';
+import { property } from '@polymer/decorators';
+import { PolymerElement } from '@polymer/polymer';
+import { Constructor } from 'lit-element';
+import { RootState, store } from '../store';
+import { fetchSpeakersList } from '../store/speakers/actions';
+import { initialSpeakersState, SpeakersState } from '../store/speakers/state';
 
 /* @polymerMixin */
-export const SpeakersHoC = (subclass) =>
-  class extends subclass {
-    protected speakers = [];
-    protected speakersMap = {};
-    protected speakersFetching = false;
-    protected speakersFetchingError = {};
+export const SpeakersHoC = <
+  T extends Constructor<PolymerElement & { stateChanged(_state: RootState): void }>
+>(
+  subclass: T
+) => {
+  class SpeakersClass extends subclass {
+    @property({ type: Object })
+    speakers: SpeakersState = initialSpeakersState;
 
-    static get properties() {
-      return {
-        ...super.properties,
-        speakers: Array,
-        speakersMap: Object,
-        speakersFetching: Boolean,
-        speakersFetchingError: Object,
-      };
-    }
-
-    stateChanged(state: import('../redux/store').State) {
+    stateChanged(state: RootState) {
       super.stateChanged(state);
-      this.setProperties({
-        speakers: state.speakers.list,
-        speakersMap: state.speakers.obj,
-        speakersFetching: state.speakers.fetching,
-        speakersFetchingError: state.speakers.fetchingError,
-      });
+      this.speakers = state.speakers;
     }
 
     connectedCallback() {
       super.connectedCallback();
 
-      if (!this.speakersFetching && (!this.speakers || !this.speakers.length)) {
-        store.dispatch(speakersActions.fetchList());
+      if (this.speakers instanceof Pending) {
+        store.dispatch(fetchSpeakersList());
       }
     }
-  };
+  }
+
+  return SpeakersClass;
+};

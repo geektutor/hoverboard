@@ -8,12 +8,16 @@ import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
 import 'plastic-image';
 import { ReduxMixin } from '../../mixins/redux-mixin';
 import { SessionsHoC } from '../../mixins/sessions-hoc';
-import { dialogsActions } from '../../redux/actions';
-import { DIALOGS } from '../../redux/constants';
+import { closeDialog, openDialog } from '../../store/dialogs/actions';
+import { DIALOGS } from '../../store/dialogs/types';
+import { RootState } from '../../store';
 import { getVariableColor, isEmpty } from '../../utils/functions';
 import '../shared-styles';
 import '../text-truncate';
 import './dialog-styles';
+import { Session } from '../../models/session';
+import { SessionsState } from '../../store/sessions/state';
+import { Success } from '@abraham/remotedata';
 
 class SpeakerDetails extends SessionsHoC(
   ReduxMixin(mixinBehaviors([IronOverlayBehavior], PolymerElement))
@@ -160,6 +164,10 @@ class SpeakerDetails extends SessionsHoC(
   static get properties() {
     return {
       ...super.properties,
+      data: {
+        type: Object,
+        observer: '_dataUpdate',
+      },
       speaker: {
         type: Object,
       },
@@ -181,7 +189,7 @@ class SpeakerDetails extends SessionsHoC(
     };
   }
 
-  stateChanged(state: import('../../redux/store').State) {
+  stateChanged(state: RootState) {
     super.stateChanged(state);
     this.setProperties({
       viewport: state.ui.viewport,
@@ -194,32 +202,41 @@ class SpeakerDetails extends SessionsHoC(
   }
 
   _close() {
-    dialogsActions.closeDialog(DIALOGS.SPEAKER);
+    closeDialog();
     history.back();
   }
 
-  _openSession(e) {
-    const sessionId = e.currentTarget.getAttribute('session-id');
-    const sessionData = this.sessionsMap[sessionId];
-
-    if (!sessionData) return;
-    dialogsActions.openDialog(DIALOGS.SESSION, sessionData);
-    dialogsActions.closeDialog(DIALOGS.SPEAKER);
+  _dataUpdate() {
+    if (this.data?.name === DIALOGS.SPEAKER) {
+      this.speaker = this.data.data;
+    }
   }
 
-  _getCloseBtnIcon(isLaptopViewport) {
+  _openSession(e: MouseEvent & { currentTarget: HTMLLIElement }) {
+    const sessionId = e.currentTarget.getAttribute('session-id');
+    const sessions: SessionsState = this.sessions;
+    if (sessions instanceof Success) {
+      const session = sessions.data.find((session: Session) => session.id === sessionId);
+      if (session) {
+        openDialog(DIALOGS.SESSION, session);
+      }
+    }
+    // TODO: handle error case
+  }
+
+  _getCloseBtnIcon(isLaptopViewport: boolean) {
     return isLaptopViewport ? 'close' : 'arrow-left';
   }
 
-  _computeCompanyInfo(title, company) {
+  _computeCompanyInfo(title: string, company: string) {
     return [title, company].filter(Boolean).join(', ');
   }
 
-  _computeJoin(...values) {
+  _computeJoin(...values: string[]) {
     return values.filter(Boolean).join(' • ');
   }
 
-  isEmpty(array) {
+  isEmpty(array: unknown[]) {
     return isEmpty(array);
   }
 

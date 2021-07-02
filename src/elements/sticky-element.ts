@@ -1,6 +1,9 @@
+import { customElement, observe, property } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer';
+import { TempAny } from '../temp-any';
 
-class StickyElement extends PolymerElement {
+@customElement('sticky-element')
+export class StickyElement extends PolymerElement {
   static get template() {
     return html`
       <style>
@@ -50,28 +53,19 @@ class StickyElement extends PolymerElement {
     `;
   }
 
-  static get is() {
-    return 'sticky-element';
-  }
-
+  @property({ type: Boolean })
   public active = false;
+  @property({ type: Boolean })
   private waiting = false;
-  private endScrollHandle: any;
-
-  static get properties() {
-    return {
-      active: {
-        type: Boolean,
-        observer: '_toggleListener',
-      },
-    };
-  }
+  @property({ type: Object })
+  private endScrollHandle: TempAny;
 
   constructor() {
     super();
     this._onScroll = this._onScroll.bind(this);
   }
 
+  @observe('active')
   _toggleListener(active) {
     if (active) {
       window.addEventListener('scroll', this._onScroll);
@@ -128,5 +122,3 @@ class StickyElement extends PolymerElement {
     }
   }
 }
-
-window.customElements.define(StickyElement.is, StickyElement);

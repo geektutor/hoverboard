@@ -3,10 +3,9 @@
   "extends": [
     "eslint:recommended",
     "plugin:jest/all",
-    "plugin:testing-library/recommended",
+    "plugin:testing-library/dom",
     "plugin:jest-dom/recommended",
     "google",
-    "plugin:polymer/polymer-3",
     "plugin:import/errors",
     "plugin:import/typescript",
     "prettier"
@@ -20,7 +19,7 @@
     "browser": true,
     "es6": true
   },
-  "plugins": ["jest", "@typescript-eslint", "html", "polymer"],
+  "plugins": ["jest", "@typescript-eslint", "html"],
   "ignorePatterns": ["dist/", "out-tsc"],
   "rules": {
     "brace-style": "off",
@@ -37,12 +36,21 @@
     "jest/no-hooks": "off",
     "jest/prefer-expect-assertions": "off"
   },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }]
+      }
+    }
+  ],
   "globals": {
     "clients": true,
     "firebase": true,
     "ga": true,
     "HOVERBOARD": true,
     "importScripts": true,
+    "Polymer": true,
     "ShadyCSS": true
   }
 }

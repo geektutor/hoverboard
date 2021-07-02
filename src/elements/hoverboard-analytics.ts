@@ -1,3 +1,5 @@
+import { TempAny } from '../temp-any';
+
 class HoverboardAnalytics extends HTMLElement {
   connectedCallback() {
     // GOOGLE ANALYTICS TRACKING
@@ -55,8 +57,7 @@ class HoverboardAnalytics extends HTMLElement {
       }
     };
 
-    // TODO: Remove any
-    (window as any).measureDuration = (mark, optReference) => {
+    (window as TempAny).measureDuration = (mark, optReference) => {
       const reference = optReference || 'responseEnd';
       const name = `${reference}:${mark}`;
 

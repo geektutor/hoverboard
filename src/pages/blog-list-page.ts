@@ -1,3 +1,5 @@
+import { Failure, Initialized, Pending, Success } from '@abraham/remotedata';
+import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/marked-element';
 import '@polymer/paper-progress';
 import { html, PolymerElement } from '@polymer/polymer';
@@ -7,11 +9,15 @@ import '../elements/posts-list';
 import '../elements/shared-styles';
 import '../elements/text-truncate';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { blogActions } from '../redux/actions';
-import { store } from '../redux/store';
+import { Post } from '../models/post';
+import { RootState, store } from '../store';
+import { fetchBlogList } from '../store/blog/actions';
+import { BlogState, initialBlogState } from '../store/blog/state';
+import { Viewport } from '../store/ui/types';
 import { getDate } from '../utils/functions';
 
-class BlogListPage extends ReduxMixin(PolymerElement) {
+@customElement('blog-list-page')
+export class BlogListPage extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -121,6 +127,10 @@ class BlogListPage extends ReduxMixin(PolymerElement) {
           </content-loader>
 
           <div class="featured-posts-wrapper">
+            <template is="dom-if" if="[[failure]]">
+              <p>Error loading posts.</p>
+            </template>
+
             <template is="dom-repeat" items="[[featuredPosts]]" as="post">
               <a
                 href$="/blog/posts/[[post.id]]/"
@@ -163,87 +173,72 @@ class BlogListPage extends ReduxMixin(PolymerElement) {
       </div>
 
       <div class="container-narrow">
-        <posts-list posts="[[posts]]"></posts-list>
+        <posts-list posts="[[posts.data]]"></posts-list>
       </div>
     `;
   }
 
-  static get is() {
-    return 'blog-list-page';
-  }
-
-  static get properties() {
-    return {
-      active: Boolean,
-      postsList: {
-        type: Array,
-      },
-      postsFetching: {
-        type: Boolean,
-      },
-      postsFetchingError: {
-        type: Object,
-      },
-      viewport: {
-        type: Object,
-      },
-      posts: Array,
-      featuredPosts: Array,
-      contentLoaderVisibility: {
-        type: String,
-        value: null,
-      },
-    };
-  }
-
+  @property({ type: Boolean })
   active = false;
+  @property({ type: Object })
+  posts: BlogState = initialBlogState;
 
-  private postsList = [];
-  private postsFetching = false;
-  private postsFetchingError = {};
-  private viewport: { isTabletPlus?: boolean } = {};
-  private posts = [];
-  private featuredPosts = [];
-  private contentLoaderVisibility = false;
+  @property({ type: Object })
+  private viewport: Viewport;
 
-  stateChanged(state: import('../redux/store').State) {
-    this.setProperties({
-      viewport: state.ui.viewport,
-      postsList: state.blog.list,
-      postsFetching: state.blog.fetching,
-      postsFetchingError: state.blog.fetchingError,
-    });
+  @computed('posts')
+  get pending() {
+    return this.posts instanceof Pending;
+  }
+
+  @computed('posts')
+  get failure() {
+    return this.posts instanceof Failure;
+  }
+
+  stateChanged(state: RootState) {
+    this.viewport = state.ui.viewport;
+    this.posts = state.blog;
   }
 
   connectedCallback() {
     super.connectedCallback();
-    if (!this.postsFetching && (!this.postsList || !this.postsList.length)) {
-      store.dispatch(blogActions.fetchList());
+    if (this.posts instanceof Initialized) {
+      store.dispatch(fetchBlogList());
     }
   }
 
-  static get observers() {
-    return ['_postsChanged(postsList)'];
-  }
-
-  _postsChanged() {
-    if (this.postsList && this.postsList.length) {
-      this.contentLoaderVisibility = true;
-      this.set('featuredPosts', this.postsList.slice(0, 3));
-      this.set('posts', this.postsList.slice(3));
+  @computed('posts')
+  get featuredPosts(): Post[] {
+    if (this.posts instanceof Success) {
+      return this.posts.data.slice(0, 3);
+    } else {
+      return [];
     }
   }
 
-  _addIfNotPhone(base, additional) {
+  @computed('posts')
+  get remainingPosts(): Post[] {
+    if (this.posts instanceof Success) {
+      return this.posts.data.slice(3);
+    } else {
+      return [];
+    }
+  }
+
+  @computed('posts')
+  get contentLoaderVisibility(): boolean {
+    return this.posts instanceof Success || this.posts instanceof Failure;
+  }
+
+  _addIfNotPhone(base: number, additional: number) {
     if (this.viewport.isTabletPlus) {
       return base + additional;
     }
     return base;
   }
 
-  getDate(date) {
+  getDate(date: Date) {
     return getDate(date);
   }
 }
-
-window.customElements.define(BlogListPage.is, BlogListPage);

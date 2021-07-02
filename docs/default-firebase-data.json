@@ -64,7 +64,7 @@
   },
   "partners": [
     {
-      "logos": [
+      "items": [
         {
           "order": 0,
           "logoUrl": "../images/logos/ecx.png",
@@ -76,7 +76,7 @@
       "title": "Main Organizer"
     },
     {
-      "logos": [
+      "items": [
         {
           "order": 0,
           "logoUrl": "../images/logos/sca.png",
