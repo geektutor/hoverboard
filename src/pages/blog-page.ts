@@ -1,12 +1,14 @@
 import '@polymer/app-route/app-route';
+import { customElement, observe, property } from '@polymer/decorators';
 import '@polymer/iron-pages';
 import { html, PolymerElement } from '@polymer/polymer';
-import { routingActions } from '../redux/actions';
+import { setSubRoute } from '../store/routing/actions';
 import { scrollToY } from '../utils/scrolling';
 import './blog-list-page';
 import './post-page';
 
-class BlogPage extends PolymerElement {
+@customElement('blog-page')
+export class BlogPage extends PolymerElement {
   static get template() {
     return html`
       <style>
@@ -38,34 +40,25 @@ class BlogPage extends PolymerElement {
     `;
   }
 
-  static get is() {
-    return 'blog-page';
-  }
-
+  @property({ type: Boolean })
   active = false;
+  @property({ type: Object })
   route = {};
 
+  @property({ type: Object })
   private routeData: { page?: string } = {};
+  @property({ type: Object })
+  private subRoute: Object;
+  @property({ type: Object })
+  private _route: Object;
 
-  static get properties() {
-    return {
-      route: Object,
-      active: Boolean,
-    };
-  }
-
-  static get observers() {
-    return ['_routeChanged(active, route)'];
-  }
-
-  _routeChanged(active, route) {
+  @observe('active', 'route')
+  _routeChanged(active: boolean, route: string) {
     if (active && route) {
       scrollToY(0, 200);
-      this.set('subRoute', {});
-      this.set('_route', route);
-      routingActions.setSubRoute(this.routeData.page);
+      this.subRoute = {};
+      this._route = route;
+      setSubRoute(this.routeData.page);
     }
   }
 }
-
-window.customElements.define(BlogPage.is, BlogPage);

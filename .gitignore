@@ -5,6 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
+firebase-debug.*.log*
 
 # Firebase cache
 .firebase/
@@ -68,3 +69,5 @@ node_modules/
 dist/
 out-tsc/
 serviceAccount.json
+*-adminsdk-*.json
+.DS_Store

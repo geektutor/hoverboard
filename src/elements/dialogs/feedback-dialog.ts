@@ -1,12 +1,12 @@
+import { IronOverlayBehavior } from '@polymer/iron-overlay-behavior';
 import '@polymer/paper-button';
 import '@polymer/paper-input/paper-textarea';
 import { html, PolymerElement } from '@polymer/polymer';
+import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
 import '@radi-cho/star-rating';
 import { ReduxMixin } from '../../mixins/redux-mixin';
-import { dialogsActions } from '../../redux/actions';
-import { IronOverlayBehavior } from '@polymer/iron-overlay-behavior';
-import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
-import { DIALOGS } from '../../redux/constants';
+import { closeDialog } from '../../store/dialogs/actions';
+import { DIALOGS } from '../../store/dialogs/types';
 import '../shared-styles';
 
 class FeedbackDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], PolymerElement)) {
@@ -42,7 +42,7 @@ class FeedbackDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
       <div class="dialog-content" layout vertical>
         <div class="dialog-header">{$ feedback.headline $}</div>
         <div class="feedback-content">
-          <feedback-block collection="sessions" db-item="[[session.id]]"></feedback-block>
+          <feedback-block session-id="[[session.id]]"></feedback-block>
         </div>
       </div>
     `;
@@ -53,6 +53,10 @@ class FeedbackDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
 
   static get properties() {
     return {
+      data: {
+        type: Object,
+        observer: '_dataUpdate',
+      },
       session: {
         type: Object,
       },
@@ -64,8 +68,14 @@ class FeedbackDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
     this.addEventListener('iron-overlay-canceled', this._close);
   }
 
+  _dataUpdate() {
+    if (this.data?.name === DIALOGS.FEEDBACK) {
+      this.session = this.data.data;
+    }
+  }
+
   _close() {
-    dialogsActions.closeDialog(DIALOGS.FEEDBACK);
+    closeDialog();
   }
 }
 

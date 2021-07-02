@@ -1,13 +1,17 @@
+import { Success } from '@abraham/remotedata';
+import { computed, customElement } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
 import { ReduxMixin } from '../mixins/redux-mixin';
 import { SpeakersHoC } from '../mixins/speakers-hoc';
+import { Speaker } from '../models/speaker';
 import { randomOrder } from '../utils/functions';
 import './shared-styles';
 import './text-truncate';
 
-class SpeakersBlock extends SpeakersHoC(ReduxMixin(PolymerElement)) {
+@customElement('speakers-block')
+export class SpeakersBlock extends SpeakersHoC(ReduxMixin(PolymerElement)) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -217,32 +221,21 @@ class SpeakersBlock extends SpeakersHoC(ReduxMixin(PolymerElement)) {
     `;
   }
 
-  static get is() {
-    return 'speakers-block';
-  }
-
-  static get observers() {
-    return ['_generateSpeakers(speakers)'];
-  }
-
-  stateChanged(state: import('../redux/store').State) {
-    super.stateChanged(state);
-    return this.setProperties({
-      speakers: state.speakers.list,
-    });
-  }
-
   _openSpeaker(e) {
     window.history.pushState({}, null, '/speakers/');
     window.history.pushState({}, null, `/speakers/${e.model.speaker.id}/`);
     window.dispatchEvent(new CustomEvent('location-changed'));
   }
 
-  _generateSpeakers(speakers) {
-    const filteredSpeakers = this.speakers.filter((speaker) => speaker.featured);
-    const randomSpeakers = randomOrder(filteredSpeakers.length ? filteredSpeakers : speakers);
-    this.set('featuredSpeakers', randomSpeakers.slice(0, 4));
+  @computed('speakers')
+  get featuredSpeakers(): Speaker[] {
+    if (this.speakers instanceof Success) {
+      const { data } = this.speakers;
+      const filteredSpeakers = data.filter((speaker) => speaker.featured);
+      const randomSpeakers = randomOrder(filteredSpeakers.length ? filteredSpeakers : data);
+      return randomSpeakers.slice(0, 4);
+    } else {
+      return [];
+    }
   }
 }
-
-window.customElements.define(SpeakersBlock.is, SpeakersBlock);

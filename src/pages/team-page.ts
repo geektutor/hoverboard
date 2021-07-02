@@ -1,3 +1,5 @@
+import { Failure, Initialized, Pending } from '@abraham/remotedata';
+import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import '@polymer/marked-element';
 import '@polymer/paper-icon-button';
@@ -5,15 +7,27 @@ import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
 import '../elements/shared-styles';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { teamActions } from '../redux/actions';
-import { store } from '../redux/store';
+import { RootState, store } from '../store';
+import { fetchTeam } from '../store/team/actions';
+import { initialTeamState, TeamState } from '../store/team/state';
 
-class TeamPage extends ReduxMixin(PolymerElement) {
+@customElement('team-page')
+export class TeamPage extends ReduxMixin(PolymerElement) {
+  @property({ type: Boolean })
   active = false;
 
-  private team = [];
-  private teamFetching = false;
-  private teamFetchingError = {};
+  @property({ type: Object })
+  teams: TeamState = initialTeamState;
+
+  @computed('teams')
+  get pending() {
+    return this.teams instanceof Pending;
+  }
+
+  @computed('teams')
+  get failure() {
+    return this.teams instanceof Failure;
+  }
 
   static get template() {
     return html`
@@ -141,7 +155,15 @@ class TeamPage extends ReduxMixin(PolymerElement) {
       </div>
 
       <div class="container">
-        <template is="dom-repeat" items="[[team]]" as="team">
+        <template is="dom-if" if="[[pending]]">
+          <p>Loading...</p>
+        </template>
+
+        <template is="dom-if" if="[[failure]]">
+          <p>Error loading teams.</p>
+        </template>
+
+        <template is="dom-repeat" items="[[teams.data]]" as="team">
           <div class="team-title">[[team.title]]</div>
 
           <div class="team-block">
@@ -181,39 +203,14 @@ class TeamPage extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  static get is() {
-    return 'team-page';
-  }
-
-  static get properties() {
-    return {
-      active: Boolean,
-      team: {
-        type: Array,
-      },
-      teamFetching: {
-        type: Boolean,
-      },
-      teamFetchingError: {
-        type: Object,
-      },
-    };
-  }
-
-  stateChanged(state: import('../redux/store').State) {
-    this.setProperties({
-      team: state.team.list,
-      teamFetching: state.team.fetching,
-      teamFetchingError: state.team.fetchingError,
-    });
+  stateChanged(state: RootState) {
+    this.teams = state.team;
   }
 
   connectedCallback() {
     super.connectedCallback();
-    if (!this.teamFetching && !this.team.length) {
-      store.dispatch(teamActions.fetchTeam());
+    if (this.teams instanceof Initialized) {
+      store.dispatch(fetchTeam());
     }
   }
 }
-
-window.customElements.define(TeamPage.is, TeamPage);

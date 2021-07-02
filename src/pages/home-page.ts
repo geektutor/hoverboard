@@ -1,6 +1,7 @@
+import { customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import { html, PolymerElement } from '@polymer/polymer';
-import '../elements/about-block';
+import '../components/about-block';
 import '../elements/about-organizer-block';
 import '../elements/featured-videos';
 import '../elements/fork-me-block';
@@ -12,10 +13,14 @@ import '../elements/speakers-block';
 import '../elements/subscribe-block';
 import '../elements/tickets-block';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { uiActions } from '../redux/actions';
+import { RootState } from '../store';
+import { toggleVideoDialog } from '../store/ui/actions';
+import { Viewport } from '../store/ui/types';
+import { TempAny } from '../temp-any';
 import { scrollToY } from '../utils/scrolling';
 
-class HomePage extends ReduxMixin(PolymerElement) {
+@customElement('home-page')
+export class HomePage extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment">
@@ -251,28 +256,18 @@ class HomePage extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  static get is() {
-    return 'home-page';
-  }
+  @property({ type: Boolean })
+  private active = false;
+  @property({ type: Object })
+  private viewport: Viewport;
 
-  static get properties() {
-    return {
-      active: Boolean,
-      viewport: {
-        type: Object,
-      },
-    };
-  }
-
-  stateChanged(state: import('../redux/store').State) {
-    this.setProperties({
-      viewport: state.ui.viewport,
-    });
+  stateChanged(state: RootState) {
+    this.viewport = state.ui.viewport;
   }
 
   _playVideo() {
-    uiActions.toggleVideoDialog({
-      title: '{$  aboutBlock.callToAction.howItWas.title $}',
+    toggleVideoDialog({
+      title: '{$  aboutBlock.callToAction.howItWas.label $}',
       youtubeId: '{$  aboutBlock.callToAction.howItWas.youtubeId $}',
       disableControls: true,
       opened: true,
@@ -280,11 +275,9 @@ class HomePage extends ReduxMixin(PolymerElement) {
   }
 
   _scrollToTickets() {
-    // TODO: Remove anys
-    const toolbarHeight =
-      (window as any).HOVERBOARD.Elements.HeaderToolbar.getBoundingClientRect().height - 1;
-    const ticketsBlockPositionY =
-      (window as any).HOVERBOARD.Elements.Tickets.getBoundingClientRect().top - toolbarHeight;
+    const Elements = (window as TempAny).HOVERBOARD.Elements;
+    const toolbarHeight = Elements.HeaderToolbar.getBoundingClientRect().height - 1;
+    const ticketsBlockPositionY = Elements.Tickets.getBoundingClientRect().top - toolbarHeight;
     scrollToY(ticketsBlockPositionY, 600, 'easeInOutSine');
   }
 
@@ -293,5 +286,3 @@ class HomePage extends ReduxMixin(PolymerElement) {
     scrollToY(heroHeight, 600, 'easeInOutSine');
   }
 }
-
-window.customElements.define(HomePage.is, HomePage);

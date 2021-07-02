@@ -1,16 +1,20 @@
+import { Initialized, Success } from '@abraham/remotedata';
+import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import '@polymer/marked-element';
 import '@polymer/paper-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { blogActions } from '../redux/actions';
-import { store } from '../redux/store';
+import { RootState, store } from '../store';
+import { fetchBlogList } from '../store/blog/actions';
+import { BlogState, initialBlogState } from '../store/blog/state';
 import { getDate } from '../utils/functions';
 import './shared-styles';
 import './text-truncate';
 
-class LatestPostsBlock extends ReduxMixin(PolymerElement) {
+@customElement('latest-posts-block')
+export class LatestPostsBlock extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment">
@@ -81,7 +85,7 @@ class LatestPostsBlock extends ReduxMixin(PolymerElement) {
         <h1 class="container-title">{$ latestPostsBlock.title $}</h1>
 
         <div class="posts-wrapper">
-          <template is="dom-repeat" items="[[posts]]" as="post">
+          <template is="dom-repeat" items="[[latestPosts]]" as="post">
             <a
               href$="/blog/posts/[[post.id]]/"
               class="post card"
@@ -129,52 +133,30 @@ class LatestPostsBlock extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  static get is() {
-    return 'latest-posts-block';
-  }
+  @property({ type: Object })
+  posts: BlogState = initialBlogState;
 
-  private viewport = {};
-  private posts = [];
-  private postsList = [];
-  private postsFetching = false;
-  private postsFetchingError = {};
-
-  static get properties() {
-    return {
-      viewport: Object,
-      posts: Array,
-      postsList: {
-        type: Array,
-        observer: '_transformPosts',
-      },
-      postsFetching: Boolean,
-      postsFetchingError: Object,
-    };
-  }
-
-  stateChanged(state: import('../redux/store').State) {
-    return this.setProperties({
-      viewport: state.ui.viewport,
-      postsList: state.blog.list,
-      postsFetching: state.blog.fetching,
-      postsFetchingError: state.blog.fetchingError,
-    });
+  stateChanged(state: RootState) {
+    this.posts = state.blog;
   }
 
   connectedCallback() {
     super.connectedCallback();
-    if (!this.postsFetching && (!this.postsList || !this.postsList.length)) {
-      store.dispatch(blogActions.fetchList());
+    if (this.posts instanceof Initialized) {
+      store.dispatch(fetchBlogList());
     }
   }
 
-  _transformPosts(postsList) {
-    this.set('posts', postsList.slice(0, 4));
+  @computed('posts')
+  get latestPosts() {
+    if (this.posts instanceof Success) {
+      return this.posts.data.slice(0, 4);
+    } else {
+      return [];
+    }
   }
 
-  getDate(date) {
+  getDate(date: Date) {
     return getDate(date);
   }
 }
-
-window.customElements.define(LatestPostsBlock.is, LatestPostsBlock);

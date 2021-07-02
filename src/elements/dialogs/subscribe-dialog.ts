@@ -4,8 +4,8 @@ import '@polymer/paper-input/paper-input';
 import { html, PolymerElement } from '@polymer/polymer';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
 import { ReduxMixin } from '../../mixins/redux-mixin';
-import { dialogsActions } from '../../redux/actions';
-import { DIALOGS } from '../../redux/constants';
+import { RootState } from '../../store';
+import { closeDialog } from '../../store/dialogs/actions';
 import '../hoverboard-icons';
 import '../shared-styles';
 
@@ -132,6 +132,9 @@ class SubscribeDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], P
         type: Boolean,
         value: false,
       },
+      data: {
+        type: Object,
+      },
       secondFieldValue: String,
       firstFieldValue: String,
       initialHeight: Number,
@@ -139,10 +142,11 @@ class SubscribeDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], P
       submitLabel: String,
       firstFieldLabel: String,
       secondFieldLabel: String,
+      email: String,
     };
   }
 
-  stateChanged(state: import('../../redux/store').State) {
+  stateChanged(state: RootState) {
     this.setProperties({
       subscribed: state.subscribed,
       ui: state.ui,
@@ -166,7 +170,7 @@ class SubscribeDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], P
   }
 
   _close() {
-    dialogsActions.closeDialog(DIALOGS.SUBSCRIBE);
+    closeDialog();
   }
 
   _handleSubscribed(subscribed) {
@@ -211,7 +215,7 @@ class SubscribeDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], P
   }
 
   _closeDialog() {
-    dialogsActions.closeDialog(DIALOGS.SUBSCRIBE);
+    closeDialog();
   }
 
   _prefillFields(userData) {
