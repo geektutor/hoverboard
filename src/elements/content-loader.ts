@@ -1,9 +1,7 @@
-import { customElement, property } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer';
 import './shared-styles';
 
-@customElement('content-loader')
-export class ContentLoader extends PolymerElement {
+class ContentLoader extends PolymerElement {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -119,40 +117,58 @@ export class ContentLoader extends PolymerElement {
     `;
   }
 
-  @property({ type: String })
+  static get is() {
+    return 'content-loader';
+  }
+
   private cardPadding: string;
-  @property({ type: String })
   private cardMargin: string;
-  @property({ type: String })
   private cardHeight: string;
-  @property({ type: String })
   private cardWidth: string;
-  @property({ type: String })
   private borderRadius: string;
-  @property({ type: String })
   private horizontalPosition: string;
-  @property({ type: String })
   private avatarSize = '0px';
-  @property({ type: String })
   private avatarCircle = '0px';
-  @property({ type: String })
   private titleTopPosition: string;
-  @property({ type: String })
   private titleHeight: string;
-  @property({ type: String })
   private titleWidth: string;
-  @property({ type: String })
   private animationTime: string;
-  @property({ type: String })
   private boxShadow: string;
-  @property({ type: String })
   private blurWidth: string;
-  @property({ type: String })
   private loadFrom: string;
-  @property({ type: String })
   private loadTo: string;
-  @property({ type: Number })
   private itemsCount = 0;
+
+  static get properties() {
+    return {
+      cardPadding: String,
+      cardMargin: String,
+      cardHeight: String,
+      cardWidth: String,
+      borderRadius: String,
+      horizontalPosition: String,
+      avatarSize: {
+        type: String,
+        value: '0px',
+      },
+      avatarCircle: {
+        type: String,
+        value: '0px',
+      },
+      titleTopPosition: String,
+      titleHeight: String,
+      titleWidth: String,
+      animationTime: String,
+      boxShadow: String,
+      blurWidth: String,
+      loadFrom: String,
+      loadTo: String,
+      itemsCount: {
+        type: Number,
+        value: 0,
+      },
+    };
+  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -181,3 +197,5 @@ export class ContentLoader extends PolymerElement {
     return new Array(Number(this.itemsCount));
   }
 }
+
+window.customElements.define(ContentLoader.is, ContentLoader);

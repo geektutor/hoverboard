@@ -1,18 +1,9 @@
-import { Success } from '@abraham/remotedata';
-import { customElement, observe, property } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { Schedule } from '../models/schedule';
-import {
-  FeaturedSessionsState,
-  initialFeaturedSessionsState,
-} from '../store/featured-sessions/state';
-import { initialScheduleState, ScheduleState } from '../store/schedule/state';
 import './schedule-day';
 import './shared-styles';
 
-@customElement('my-schedule')
-export class MySchedule extends ReduxMixin(PolymerElement) {
+class MySchedule extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment">
@@ -54,31 +45,43 @@ export class MySchedule extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  private schedule: ScheduleState = initialScheduleState;
-  @property({ type: Array })
+  static get is() {
+    return 'my-schedule';
+  }
+
+  private schedule = [];
   private featuredSchedule = [];
-  @property({ type: Object })
-  private featuredSessions: FeaturedSessionsState = initialFeaturedSessionsState;
-  @property({ type: Object })
+  private featuredSessions = {};
   private selectedFilters = {};
-  @property({ type: String })
   private queryParams: string;
-  @property({ type: Object })
   private viewport = {};
-  @property({ type: Object })
   private user = {};
 
-  @observe('schedule', 'featuredSessions')
-  _filterSchedule(schedule: Schedule, featuredSessions: FeaturedSessionsState) {
-    if (schedule instanceof Success && featuredSessions instanceof Success) {
-      this.featuredSchedule = schedule.data.map((day) =>
+  static get properties() {
+    return {
+      schedule: Array,
+      featuredSchedule: Array,
+      featuredSessions: Object,
+      selectedFilters: Object,
+      queryParams: String,
+      viewport: Object,
+      user: Object,
+    };
+  }
+
+  static get observers() {
+    return ['_filterSchedule(schedule, featuredSessions)'];
+  }
+
+  _filterSchedule(schedule, featuredSessions) {
+    if (schedule.length) {
+      this.featuredSchedule = schedule.map((day) =>
         Object.assign({}, day, {
           timeslots: day.timeslots.map((timeslot) =>
             Object.assign({}, timeslot, {
               sessions: timeslot.sessions.map((sessionBlock) =>
                 Object.assign({}, sessionBlock, {
-                  items: sessionBlock.items.filter((session) => featuredSessions.data[session.id]),
+                  items: sessionBlock.items.filter((session) => featuredSessions[session.id]),
                 })
               ),
             })
@@ -88,3 +91,5 @@ export class MySchedule extends ReduxMixin(PolymerElement) {
     }
   }
 }
+
+customElements.define(MySchedule.is, MySchedule);

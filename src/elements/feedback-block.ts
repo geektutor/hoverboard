@@ -3,13 +3,10 @@ import '@polymer/paper-input/paper-textarea';
 import { html, PolymerElement } from '@polymer/polymer';
 import '@radi-cho/star-rating';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { addComment, checkPreviousFeedback, deleteFeedback } from '../store/feedback/actions';
-import { RootState, store } from '../store';
-import { showToast } from '../store/toast/actions';
-import { computed, customElement, observe, property } from '@polymer/decorators';
+import { feedbackActions, toastActions } from '../redux/actions';
+import { store } from '../redux/store';
 
-@customElement('feedback-block')
-export class Feedback extends ReduxMixin(PolymerElement) {
+class Feedback extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style>
@@ -103,56 +100,112 @@ export class Feedback extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Number })
-  contentRating = 0;
-  @property({ type: Number })
-  styleRating = 0;
-  @property({ type: String })
+  private rating = false;
+  private contentRating = 0;
+  private styleRating = 0;
   private comment = '';
-  @property({ type: String })
-  private sessionId: string;
-  @property({ type: Object })
+  private collection: string;
+  private dbItem: string;
   private user: { uid?: string; signedIn?: boolean } = {};
-  @property({ type: Object })
   private previousFeedback: { comment?: string; styleRating?: number; contentRating?: number } = {};
-  @property({ type: Boolean, observer: Feedback.prototype._feedbackAddingChanged })
   private feedbackFetching = false;
-  @property({ type: Boolean })
   private feedbackAdding = false;
-  @property({ type: Object })
   private feedbackAddingError = {};
-  @property({ type: Boolean, observer: Feedback.prototype._feedbackDeletingChanged })
   private feedbackDeleting = false;
-  @property({ type: Object })
   private feedbackDeletingError = {};
-  @property({ type: Boolean })
   private showDeleteButton = false;
-  @property({ type: Boolean })
   private feedbackState = {};
 
-  stateChanged(state: RootState) {
-    this.feedbackState = state.feedback;
-    this.feedbackDeleting = state.feedback.deleting;
-    this.feedbackDeletingError = state.feedback.deletingError;
-    this.feedbackAdding = state.feedback.adding;
-    this.feedbackAddingError = state.feedback.addingError;
-    this.feedbackFetching = state.feedback.fetching;
-    this.user = state.user;
+  static get properties() {
+    return {
+      rating: {
+        type: Boolean,
+        value: false,
+        computed: '_hasRating(contentRating, styleRating)',
+      },
+      contentRating: {
+        type: Number,
+        value: 0,
+      },
+      styleRating: {
+        type: Number,
+        value: 0,
+      },
+      comment: {
+        type: String,
+        value: '',
+      },
+      collection: {
+        type: String,
+        value: 'sessions',
+      },
+      dbItem: {
+        type: String,
+        observer: '_dbItemChanged',
+      },
+      user: {
+        type: Object,
+        observer: '_userChanged',
+      },
+      previousFeedback: {
+        type: Object,
+        observer: '_previousFeedbackChanged',
+      },
+      feedbackFetching: {
+        type: Boolean,
+      },
+      feedbackAdding: {
+        type: Boolean,
+        observer: '_feedbackAddingChanged',
+      },
+      feedbackAddingError: {
+        type: Object,
+      },
+      feedbackDeleting: {
+        type: Boolean,
+        observer: '_feedbackDeletingChanged',
+      },
+      feedbackDeletingError: {
+        type: Object,
+      },
+      showDeleteButton: {
+        type: Boolean,
+        value: false,
+      },
+      feedbackState: {
+        type: Object,
+        observer: '_updateFeedbackState',
+      },
+    };
   }
 
-  @observe('feedbackState')
-  _updateFeedbackState(feedbackState) {
-    if (feedbackState) {
-      if (this.sessionId) this.previousFeedback = feedbackState[this.sessionId];
+  static get is() {
+    return 'feedback-block';
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    return this.setProperties({
+      feedbackState: state.feedback,
+      feedbackDeleting: state.feedback.deleting,
+      feedbackDeletingError: state.feedback.deletingError,
+      feedbackAdding: state.feedback.adding,
+      feedbackAddingError: state.feedback.addingError,
+      feedbackFetching: state.feedback.fetching,
+      user: state.user,
+    });
+  }
+
+  _updateFeedbackState() {
+    if (this.feedbackState[this.collection]) {
+      if (this.dbItem) this.previousFeedback = this.feedbackState[this.collection][this.dbItem];
     } else {
       this.previousFeedback = undefined;
     }
   }
 
-  @observe('user')
   _userChanged(newUser) {
     if (newUser.signedIn) {
-      if (this.sessionId && !this.feedbackFetching) this._dispatchPreviousFeedback();
+      if (this.dbItem && !this.feedbackFetching) this._dispatchPreviousFeedback();
     } else {
       this._clear();
     }
@@ -165,14 +218,13 @@ export class Feedback extends ReduxMixin(PolymerElement) {
     this.showDeleteButton = false;
   }
 
-  @observe('sessionId')
-  _sessionIdChanged(newSessionId) {
+  _dbItemChanged(newdbItem, _olddbItem) {
     this._clear();
 
-    if (newSessionId) {
+    if (newdbItem) {
       // Check for previous feedback once the session/speaker id is available
-      this._updateFeedbackState(this.feedbackState);
-      this._previousFeedbackChanged(this.previousFeedback);
+      this._updateFeedbackState();
+      this._previousFeedbackChanged();
 
       if (this.user.signedIn && !this.feedbackFetching && this.previousFeedback === undefined) {
         this._dispatchPreviousFeedback();
@@ -180,13 +232,12 @@ export class Feedback extends ReduxMixin(PolymerElement) {
     }
   }
 
-  @observe('previousFeedback')
-  _previousFeedbackChanged(previousFeedback) {
-    if (previousFeedback) {
+  _previousFeedbackChanged() {
+    if (this.previousFeedback) {
       this.showDeleteButton = true;
-      this.contentRating = previousFeedback.contentRating;
-      this.styleRating = previousFeedback.styleRating;
-      this.comment = previousFeedback.comment;
+      this.contentRating = this.previousFeedback.contentRating;
+      this.styleRating = this.previousFeedback.styleRating;
+      this.comment = this.previousFeedback.comment;
     }
   }
 
@@ -197,9 +248,10 @@ export class Feedback extends ReduxMixin(PolymerElement) {
 
   _dispatchSendFeedback() {
     store.dispatch(
-      addComment({
+      feedbackActions.addComment({
         userId: this.user.uid,
-        sessionId: this.sessionId,
+        collection: this.collection,
+        dbItem: this.dbItem,
         contentRating: this.contentRating,
         styleRating: this.styleRating,
         comment: this.comment,
@@ -209,8 +261,9 @@ export class Feedback extends ReduxMixin(PolymerElement) {
 
   _dispatchPreviousFeedback() {
     store.dispatch(
-      checkPreviousFeedback({
-        sessionId: this.sessionId,
+      feedbackActions.checkPreviousFeedback({
+        collection: this.collection,
+        dbItem: this.dbItem,
         userId: this.user.uid,
       })
     );
@@ -218,8 +271,9 @@ export class Feedback extends ReduxMixin(PolymerElement) {
 
   _dispatchDeleteFeedback() {
     store.dispatch(
-      deleteFeedback({
-        sessionId: this.sessionId,
+      feedbackActions.deleteFeedback({
+        collection: this.collection,
+        dbItem: this.dbItem,
         userId: this.user.uid,
       })
     );
@@ -228,7 +282,7 @@ export class Feedback extends ReduxMixin(PolymerElement) {
   _feedbackAddingChanged(newFeedbackAdding, oldFeedbackAdding) {
     if (oldFeedbackAdding && !newFeedbackAdding) {
       if (this.feedbackAddingError) {
-        showToast({
+        toastActions.showToast({
           message: '{$ feedback.somethingWentWrong $}',
           action: {
             title: 'Retry',
@@ -238,7 +292,7 @@ export class Feedback extends ReduxMixin(PolymerElement) {
           },
         });
       } else {
-        showToast({ message: '{$ feedback.feedbackRecorded $}' });
+        toastActions.showToast({ message: '{$ feedback.feedbackRecorded $}' });
       }
     }
   }
@@ -246,7 +300,7 @@ export class Feedback extends ReduxMixin(PolymerElement) {
   _feedbackDeletingChanged(newFeedbackDeleting, oldFeedbackDeleting) {
     if (oldFeedbackDeleting && !newFeedbackDeleting) {
       if (this.feedbackDeletingError) {
-        showToast({
+        toastActions.showToast({
           message: '{$ feedback.somethingWentWrong $}',
           action: {
             title: 'Retry',
@@ -257,16 +311,14 @@ export class Feedback extends ReduxMixin(PolymerElement) {
         });
       } else {
         this._clear();
-        showToast({ message: '{$ feedback.feedbackDeleted $}' });
+        toastActions.showToast({ message: '{$ feedback.feedbackDeleted $}' });
       }
     }
   }
 
-  @computed('contentRating', 'styleRating')
-  get rating() {
-    return (
-      (this.contentRating > 0 && this.contentRating <= 5) ||
-      (this.styleRating > 0 && this.styleRating <= 5)
-    );
+  _hasRating(contentRating, styleRating) {
+    return (contentRating > 0 && contentRating <= 5) || (styleRating > 0 && styleRating <= 5);
   }
 }
+
+window.customElements.define(Feedback.is, Feedback);

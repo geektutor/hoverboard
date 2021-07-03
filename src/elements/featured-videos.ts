@@ -1,20 +1,15 @@
-import { Failure, Initialized, Pending } from '@abraham/remotedata';
-import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import '@polymer/paper-button';
 import '@polymer/paper-icon-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState, store } from '../store';
-import { toggleVideoDialog } from '../store/ui/actions';
-import { fetchVideos } from '../store/videos/actions';
-import { initialVideosState, VideoState } from '../store/videos/state';
+import { uiActions, videosActions } from '../redux/actions';
+import { store } from '../redux/store';
 import './shared-animations';
 import './shared-styles';
 
-@customElement('featured-videos')
-export class FeaturedVideos extends ReduxMixin(PolymerElement) {
+class FeaturedVideos extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -144,15 +139,7 @@ export class FeaturedVideos extends ReduxMixin(PolymerElement) {
           ></paper-icon-button>
           <div id="videoList" class="video-list" layout flex horizontal>
             <div id="videos" class="videos" layout horizontal>
-              <template is="dom-if" if="[[pending]]">
-                <p>Loading...</p>
-              </template>
-
-              <template is="dom-if" if="[[failure]]">
-                <p>Error loading videos.</p>
-              </template>
-
-              <template is="dom-repeat" items="[[videos.data]]" as="block" index-as="index">
+              <template is="dom-repeat" items="[[videos]]" as="block" index-as="index">
                 <div
                   class="video-item"
                   on-click="playVideo"
@@ -206,36 +193,46 @@ export class FeaturedVideos extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  videos: VideoState = initialVideosState;
+  static get is() {
+    return 'featured-videos';
+  }
 
-  @property({ type: Object })
+  private videos = [];
+  private videosFetching = false;
+  private videosFetchingError = {};
   private viewport = {};
-  @property({ type: Boolean })
   private _leftArrowHidden = true;
-  @property({ type: Boolean })
   private _rightArrowHidden = false;
 
-  @computed('videos')
-  get pending() {
-    return this.videos instanceof Pending;
+  static get properties() {
+    return {
+      videos: Array,
+      videosFetching: Boolean,
+      videosFetchingError: Object,
+      viewport: Object,
+      _leftArrowHidden: {
+        type: Boolean,
+        value: true,
+      },
+      _rightArrowHidden: {
+        type: Boolean,
+        value: false,
+      },
+    };
   }
 
-  @computed('videos')
-  get failure() {
-    return this.videos instanceof Failure;
-  }
-
-  stateChanged(state: RootState) {
-    this.videos = state.videos;
-    this.viewport = state.ui.viewport;
+  stateChanged(state: import('../redux/store').State) {
+    return this.setProperties({
+      videos: state.videos.list,
+      videosFetching: state.videos.fetching,
+      videosFetchingError: state.videos.fetchingError,
+      viewport: state.ui.viewport,
+    });
   }
 
   connectedCallback() {
     super.connectedCallback();
-    if (this.videos instanceof Initialized) {
-      store.dispatch(fetchVideos());
-    }
+    store.dispatch(videosActions.fetchVideos());
   }
 
   shiftContentLeft() {
@@ -318,7 +315,7 @@ export class FeaturedVideos extends ReduxMixin(PolymerElement) {
     const title = e.model.__data.block.title + presenters;
     const youtubeId = e.model.__data.block.youtubeId;
 
-    toggleVideoDialog({
+    uiActions.toggleVideoDialog({
       title: title,
       youtubeId: youtubeId,
       disableControls: true,
@@ -326,3 +323,5 @@ export class FeaturedVideos extends ReduxMixin(PolymerElement) {
     });
   }
 }
+
+window.customElements.define(FeaturedVideos.is, FeaturedVideos);

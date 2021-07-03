@@ -1,17 +1,12 @@
-import { Failure, Initialized, Success } from '@abraham/remotedata';
-import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/paper-input/paper-input';
-import { PaperInputElement } from '@polymer/paper-input/paper-input';
 import { html, PolymerElement } from '@polymer/polymer';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState, store } from '../store';
-import { subscribe } from '../store/subscribe/actions';
-import { initialSubscribeState, SubscribeState } from '../store/subscribe/state';
+import { subscribeActions } from '../redux/actions';
+import { store } from '../redux/store';
 import './hoverboard-icons';
 import './shared-styles';
 
-@customElement('subscribe-form-footer')
-export class SubscribeFormFooter extends ReduxMixin(PolymerElement) {
+class SubscribeFormFooter extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -64,18 +59,14 @@ export class SubscribeFormFooter extends ReduxMixin(PolymerElement) {
           auto-validate$="[[validate]]"
           error-message="{$ subscribeBlock.emailRequired $}"
           autocomplete="off"
-          disabled="[[subscribed.data]]"
+          disabled="[[subscribed]]"
         >
-          <iron-icon
-            icon="hoverboard:checked"
-            slot="suffix"
-            hidden$="[[!subscribed.data]]"
-          ></iron-icon>
+          <iron-icon icon="hoverboard:checked" slot="suffix" hidden$="[[!subscribed]]"></iron-icon>
         </paper-input>
         <paper-button
           on-click="_subscribe"
           ga-on="click"
-          disabled="[[disabled]]"
+          disabled="[[subscribed]]"
           ga-event-category="attendees"
           ga-event-action="subscribe"
           ga-event-label="subscribe footer"
@@ -88,46 +79,51 @@ export class SubscribeFormFooter extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  subscribed: SubscribeState = initialSubscribeState;
-  @property({ type: String })
-  email = '';
+  static get is() {
+    return 'subscribe-form-footer';
+  }
 
-  @property({ type: Boolean })
+  private subscribed = false;
   private validate = false;
+  private ctaLabel: string;
+  private email: string;
 
-  stateChanged(state: RootState) {
-    this.subscribed = state.subscribed;
+  static get properties() {
+    return {
+      subscribed: {
+        type: Boolean,
+      },
+      validate: {
+        type: Boolean,
+        value: false,
+      },
+      ctaLabel: {
+        type: String,
+        computed: '_computeButtonLabel(subscribed)',
+      },
+    };
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    this.setProperties({
+      subscribed: state.subscribed,
+    });
   }
 
   _subscribe() {
     this.validate = true;
-    const emailInput = this.shadowRoot.querySelector<PaperInputElement>('#emailInput');
+    const emailInput = this.shadowRoot.querySelector<
+      import('@polymer/paper-input/paper-input').PaperInputElement
+    >('#emailInput');
 
-    if ((this.initialized || this.failure) && emailInput.validate()) {
-      store.dispatch(subscribe({ email: this.email }));
+    if (!this.subscribed && emailInput.validate()) {
+      store.dispatch(subscribeActions.subscribe({ email: this.email }));
     }
   }
 
-  @computed('subscribed')
-  get ctaLabel() {
-    return this.subscribed instanceof Success
-      ? '{$  subscribeBlock.subscribed $}'
-      : '{$  subscribeBlock.subscribe $}';
-  }
-
-  @computed('email', 'subscribed')
-  get disabled() {
-    return !this.email || this.subscribed instanceof Success;
-  }
-
-  @computed('subscribed')
-  get failure() {
-    return this.subscribed instanceof Failure;
-  }
-
-  @computed('subscribed')
-  get initialized() {
-    return this.subscribed instanceof Initialized;
+  _computeButtonLabel(subscribed) {
+    return subscribed ? '{$  subscribeBlock.subscribed $}' : '{$  subscribeBlock.subscribe $}';
   }
 }
+
+window.customElements.define(SubscribeFormFooter.is, SubscribeFormFooter);

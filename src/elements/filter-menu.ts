@@ -1,11 +1,9 @@
-import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-location/iron-location';
 import { html, PolymerElement } from '@polymer/polymer';
 import { generateClassName, getVariableColor, toggleQueryParam } from '../utils/functions';
 import './shared-styles';
 
-@customElement('filter-menu')
-export class FilterMenu extends PolymerElement {
+class FilterMenu extends PolymerElement {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -154,16 +152,35 @@ export class FilterMenu extends PolymerElement {
     `;
   }
 
-  @property({ type: Array })
-  filters = [];
-  @property({ type: Number })
+  static get is() {
+    return 'filter-menu';
+  }
+
+  private filters = [];
   private resultsCount = 0;
-  @property({ type: Object })
-  selected = {};
-  @property({ type: String })
+  private selected = {};
   private queryParams: string;
-  @property({ type: Boolean })
+  private _selectedArray = [];
   private _openedBoard = false;
+
+  static get properties() {
+    return {
+      filters: Array,
+      resultsCount: Number,
+      selected: {
+        type: Object,
+        value: {},
+      },
+      _selectedArray: {
+        type: Array,
+        computed: '_generateSelectedArray(selected, filters)',
+      },
+      _openedBoard: {
+        type: Boolean,
+        value: false,
+      },
+    };
+  }
 
   constructor() {
     super();
@@ -177,15 +194,11 @@ export class FilterMenu extends PolymerElement {
   _toggleFilter(e) {
     const filterKey = e.currentTarget.getAttribute('filter-key');
     const filter = generateClassName(e.currentTarget.getAttribute('filter-value').trim());
-    this.queryParams = toggleQueryParam(this.queryParams, filterKey, filter);
+    this.set('queryParams', toggleQueryParam(this.queryParams, filterKey, filter));
   }
 
-  @computed('selected', 'filters')
-  private get _selectedArray() {
-    const { selected, filters } = this;
-
-    if (!selected || !filters) return [];
-
+  _generateSelectedArray(selected, filters) {
+    if (!selected || !filters) return;
     const targetFilters = filters.map((filter) => filter.key);
     return Object.keys(selected)
       .filter((key) => targetFilters.includes(key))
@@ -198,12 +211,12 @@ export class FilterMenu extends PolymerElement {
     } else {
       this._clickOutsideListen();
     }
-    this._openedBoard = !this._openedBoard;
+    this.set('_openedBoard', !this._openedBoard);
   }
 
   _resetFilters(e) {
     e.preventDefault();
-    this.queryParams = '';
+    this.set('queryParams', '');
   }
 
   _getFilterIcon(state) {
@@ -235,3 +248,5 @@ export class FilterMenu extends PolymerElement {
     return getVariableColor(this, value, fallback);
   }
 }
+
+customElements.define(FilterMenu.is, FilterMenu);

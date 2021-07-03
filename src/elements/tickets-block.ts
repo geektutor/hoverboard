@@ -1,19 +1,12 @@
-import { Pending, Success } from '@abraham/remotedata';
-import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import '@polymer/paper-button';
 import { html, PolymerElement } from '@polymer/polymer';
-import { TempAny } from '../../functions/src/temp-any';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { Ticket } from '../models/ticket';
-import { RootState } from '../store';
-import { initialTicketsState, TicketsState } from '../store/tickets/state';
 import './content-loader';
 import './hoverboard-icons';
 import './shared-styles';
 
-@customElement('tickets-block')
-export class TicketsBlock extends ReduxMixin(PolymerElement) {
+class TicketsBlock extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -146,14 +139,12 @@ export class TicketsBlock extends ReduxMixin(PolymerElement) {
           load-to="130%"
           animation-time="1s"
           items-count="{$ contentLoaders.tickets.itemsCount $}"
-          hidden$="[[!pending]]"
+          hidden$="[[contentLoaderVisibility]]"
         >
         </content-loader>
 
         <div class="tickets" layout horizontal wrap center-justified>
-          <template is="dom-if" if="[[tickets.error]]"> Error loading tickets </template>
-
-          <template is="dom-repeat" items="[[tickets.data]]" as="ticket">
+          <template is="dom-repeat" items="[[tickets]]" as="ticket">
             <a
               class="ticket-item card"
               href$="[[ticket.url]]"
@@ -185,7 +176,9 @@ export class TicketsBlock extends ReduxMixin(PolymerElement) {
                 </div>
               </div>
               <div class="actions">
-                <div class="sold-out" block$="[[ticket.soldOut]]">{$ ticketsBlock.soldOut $}</div>
+                <div class="sold-out" block$="[[ticket.soldOut]]">
+                  {$ ticketsBlock.soldOut $}
+                </div>
                 <paper-button
                   primary
                   hidden$="[[ticket.soldOut]]"
@@ -203,43 +196,62 @@ export class TicketsBlock extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  tickets: TicketsState = initialTicketsState;
+  static get is() {
+    return 'tickets-block';
+  }
 
-  @property({ type: Object })
+  private tickets = [];
+  private ticketsFetching = false;
+  private ticketsFetchingError = {};
   private viewport = {};
+  private contentLoaderVisibility = false;
 
-  stateChanged(state: RootState) {
-    this.viewport = state.ui.viewport;
-    this.tickets = state.tickets;
+  static get properties() {
+    return {
+      tickets: {
+        type: Array,
+        observer: '_ticketsChanged',
+      },
+      ticketsFetching: {
+        type: Boolean,
+      },
+      ticketsFetchingError: {
+        type: Object,
+      },
+      viewport: {
+        type: Object,
+      },
+      contentLoaderVisibility: Boolean,
+    };
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    this.setProperties({
+      viewport: state.ui.viewport,
+      tickets: state.tickets.list,
+      ticketsFetching: state.tickets.fetching,
+      ticketsFetchingError: state.tickets.fetchingError,
+    });
   }
 
   connectedCallback() {
     super.connectedCallback();
-    (window as TempAny).HOVERBOARD.Elements.Tickets = this;
+    // TODO: Remove any
+    (window as any).HOVERBOARD.Elements.Tickets = this;
   }
 
-  @computed('tickets')
-  get pending() {
-    return this.tickets instanceof Pending;
+  _ticketsChanged(tickets) {
+    if (tickets && tickets.length) {
+      this.set('contentLoaderVisibility', true);
+    }
   }
 
-  _getDiscount(ticket: Ticket) {
-    if (!(this.tickets instanceof Success)) {
-      return;
-    }
-    const primaryTicket = this.tickets.data.find((ticket) => ticket.primary);
-    if (!primaryTicket) {
-      return;
-    }
+  _getDiscount(ticket) {
+    const primaryTicket = this.tickets.find((ticket) => ticket.primary);
     const maxPrice = primaryTicket && primaryTicket.price;
-    if (!ticket.regular || ticket.primary || ticket.soldOut || !maxPrice) {
-      return;
-    }
-    // TODO: Remove eslint exception
-    // eslint-disable-next-line
-    const discount = Math.round(100 - (ticket.price * 100) / maxPrice);
-    return `{$ ticketsBlock.save $}`;
+    if (!ticket.regular || ticket.primary || ticket.soldOut || !maxPrice) return;
+    const discount = 100 - (parseInt(ticket.price) * 100) / parseInt(maxPrice);
+    return ((discount) => `{$ ticketsBlock.save $}`)(Math.round(discount));
   }
 
   _onTicketTap(e) {
@@ -253,3 +265,5 @@ export class TicketsBlock extends ReduxMixin(PolymerElement) {
     return available ? '{$ buyTicket $}' : '{$ ticketsBlock.notAvailableYet $}';
   }
 }
+
+window.customElements.define(TicketsBlock.is, TicketsBlock);

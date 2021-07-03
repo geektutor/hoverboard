@@ -1,11 +1,10 @@
-import { customElement, property } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer';
 import '../elements/footer-block';
+import '../elements/hero-block';
 import '../elements/md-content';
 import '../elements/polymer-helmet';
 
-@customElement('faq-page')
-export class FaqPage extends PolymerElement {
+class FaqPage extends PolymerElement {
   static get template() {
     return html`
       <style>
@@ -36,8 +35,19 @@ export class FaqPage extends PolymerElement {
     `;
   }
 
-  @property({ type: Boolean })
-  active = false;
-  @property({ type: String })
-  source = '{$ faq $}';
+  static get is() {
+    return 'faq-page';
+  }
+
+  static get properties() {
+    return {
+      active: Boolean,
+      source: {
+        type: String,
+        value: '{$ faq $}',
+      },
+    };
+  }
 }
+
+window.customElements.define(FaqPage.is, FaqPage);

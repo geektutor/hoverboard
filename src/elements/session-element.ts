@@ -1,25 +1,15 @@
-import { Success } from '@abraham/remotedata';
-import { customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { store } from '../store';
-import { openDialog } from '../store/dialogs/actions';
-import { DIALOGS } from '../store/dialogs/types';
-import { setUserFeaturedSessions } from '../store/featured-sessions/actions';
-import {
-  FeaturedSessionsState,
-  initialFeaturedSessionsState,
-} from '../store/featured-sessions/state';
-import { showToast } from '../store/toast/actions';
-import { TempAny } from '../temp-any';
+import { dialogsActions, sessionsActions, toastActions } from '../redux/actions';
+import { DIALOGS } from '../redux/constants';
+import { store } from '../redux/store';
 import { getVariableColor, toggleQueryParam } from '../utils/functions';
 import './shared-styles';
 import './text-truncate';
 
-@customElement('session-element')
-export class SessionElement extends ReduxMixin(PolymerElement) {
+class SessionElement extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -220,7 +210,9 @@ export class SessionElement extends ReduxMixin(PolymerElement) {
 
                 <div class="speaker-details" flex>
                   <div class="speaker-name">[[speaker.name]]</div>
-                  <div class="speaker-title">[[_join(speaker.company, speaker.country)]]</div>
+                  <div class="speaker-title">
+                    [[_join(speaker.company, speaker.country)]]
+                  </div>
                 </div>
               </div>
             </template>
@@ -230,33 +222,42 @@ export class SessionElement extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
+  static get is() {
+    return 'session-element';
+  }
+
   private user: { uid?: string; signedIn?: boolean } = {};
-  @property({ type: Object })
-  private session: {
-    id: string;
-    day: TempAny;
-    startTime: TempAny;
-    mainTag: string;
-  };
-  @property({ type: Object })
-  private featuredSessions: FeaturedSessionsState = initialFeaturedSessionsState;
-  @property({ type: String })
+  private session: { id?: string; day?: any; startTime?: any } = {};
+  private featuredSessions = {};
   private queryParams: string;
-  @property({ type: String })
-  private dayName: string;
-  @property({ type: String, computed: 'getVariableColor(session.mainTag)' })
-  private sessionCollor: string;
-  @property({ type: String, computed: '_isFeatured(featuredSessions, session.id)' })
+  private sessionColor: string;
   private isFeatured: string;
-  @property({ type: String, computed: '_summary(session.description)' })
   private summary: string;
 
-  _isFeatured(featuredSessions: FeaturedSessionsState, sessionId?: string) {
-    if (featuredSessions instanceof Success && sessionId) {
-      return featuredSessions.data[sessionId];
-    }
-    return false;
+  static get properties() {
+    return {
+      user: Object,
+      session: Object,
+      featuredSessions: Object,
+      queryParams: String,
+      sessionColor: {
+        type: String,
+        computed: 'getVariableColor(session.mainTag)',
+      },
+      isFeatured: {
+        type: String,
+        computed: '_isFeatured(featuredSessions, session.id)',
+      },
+      summary: {
+        type: String,
+        computed: '_summary(session.description)',
+      },
+    };
+  }
+
+  _isFeatured(featuredSessions, sessionId) {
+    if (!featuredSessions || !sessionId) return false;
+    return featuredSessions[sessionId];
   }
 
   _getEnding(number) {
@@ -280,31 +281,29 @@ export class SessionElement extends ReduxMixin(PolymerElement) {
     event.preventDefault();
     event.stopPropagation();
     if (!this.user.signedIn) {
-      showToast({
+      toastActions.showToast({
         message: '{$ schedule.saveSessionsSignedOut $}',
         action: {
           title: 'Sign in',
           callback: () => {
-            openDialog(DIALOGS.SIGNIN);
+            dialogsActions.openDialog(DIALOGS.SIGNIN);
           },
         },
       });
       return;
     }
 
-    if (this.featuredSessions instanceof Success) {
-      const sessions = Object.assign({}, this.featuredSessions.data, {
-        [this.session.id]: !this.featuredSessions.data[this.session.id] ? true : null,
-      });
+    const sessions = Object.assign({}, this.featuredSessions, {
+      [this.session.id]: !this.featuredSessions[this.session.id] ? true : null,
+    });
 
-      store.dispatch(setUserFeaturedSessions(this.user.uid, sessions));
-    }
+    store.dispatch(sessionsActions.setUserFeaturedSessions(this.user.uid, sessions));
   }
 
   _toggleFeedback(event) {
     event.preventDefault();
     event.stopPropagation();
-    openDialog(DIALOGS.FEEDBACK, this.session);
+    dialogsActions.openDialog(DIALOGS.FEEDBACK, this.session);
   }
 
   _acceptingFeedback() {
@@ -336,3 +335,5 @@ export class SessionElement extends ReduxMixin(PolymerElement) {
     return text && text.slice(0, number);
   }
 }
+
+window.customElements.define(SessionElement.is, SessionElement);

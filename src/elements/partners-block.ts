@@ -1,22 +1,15 @@
-import { Failure, Initialized, Pending } from '@abraham/remotedata';
-import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import '@polymer/paper-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState, store } from '../store';
-import { closeDialog, openDialog, setDialogError } from '../store/dialogs/actions';
-import { DIALOGS } from '../store/dialogs/types';
-import { fetchPartners } from '../store/partners/actions';
-import { initialPartnersState, PartnersState } from '../store/partners/state';
-import { addPotentialPartner } from '../store/potential-partners/actions';
-import { showToast } from '../store/toast/actions';
+import { dialogsActions, partnersActions, toastActions } from '../redux/actions';
+import { DIALOGS } from '../redux/constants';
+import { store } from '../redux/store';
 import './hoverboard-icons';
 import './shared-styles';
 
-@customElement('partners-block')
-export class PartnersBlock extends ReduxMixin(PolymerElement) {
+class PartnersBlock extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment">
@@ -64,14 +57,7 @@ export class PartnersBlock extends ReduxMixin(PolymerElement) {
       <div class="container">
         <h1 class="container-title">{$ partnersBlock.title $}</h1>
 
-        <template is="dom-if" if="[[pending]]">
-          <p>Loading...</p>
-        </template>
-        <template is="dom-if" if="[[failure]]">
-          <p>Error loading partners.</p>
-        </template>
-
-        <template is="dom-repeat" items="[[partners.data]]" as="block">
+        <template is="dom-repeat" items="[[partners]]" as="block">
           <h4 class="block-title">[[block.title]]</h4>
           <div class="logos-wrapper">
             <template is="dom-repeat" items="[[block.items]]" as="logo">
@@ -106,58 +92,70 @@ export class PartnersBlock extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
+  static get is() {
+    return 'partners-block';
+  }
+
   private viewport = {};
-  @property({ type: Boolean, observer: PartnersBlock.prototype._partnerAddingChanged })
+  private partners = [];
+  private partnersFetching = false;
+  private partnersFetchingError = {};
   private partnerAdding = false;
-  @property({ type: Object })
-  private partnerAddingError: Error;
+  private partnerAddingError = {};
 
-  @property({ type: Object })
-  partners: PartnersState = initialPartnersState;
-
-  @computed('partners')
-  get pending() {
-    return this.partners instanceof Pending;
+  static get properties() {
+    return {
+      partners: Array,
+      partnersFetching: Boolean,
+      partnersFetchingError: Object,
+      partnerAdding: {
+        type: Boolean,
+        observer: '_partnerAddingChanged',
+      },
+      partnerAddingError: Object,
+    };
   }
 
-  @computed('partners')
-  get failure() {
-    return this.partners instanceof Failure;
-  }
-
-  stateChanged(state: RootState) {
-    this.viewport = state.ui.viewport;
-    this.partners = state.partners;
-    this.partnerAdding = state.potentialPartners.adding;
-    this.partnerAddingError = state.potentialPartners.addingError;
+  stateChanged(state: import('../redux/store').State) {
+    return this.setProperties({
+      viewport: state.ui.viewport,
+      partners: state.partners.list,
+      partnersFetching: state.partners.fetching,
+      partnersFetchingError: state.partners.fetchingError,
+      partnerAdding: state.partners.adding,
+      partnerAddingError: state.partners.addingError,
+    });
   }
 
   connectedCallback() {
     super.connectedCallback();
-    if (this.partners instanceof Initialized) {
-      store.dispatch(fetchPartners());
+    if (!this.partnersFetching && (!this.partners || !this.partners.length)) {
+      store.dispatch(partnersActions.fetchPartners());
     }
   }
 
   _addPotentialPartner() {
-    openDialog(DIALOGS.SUBSCRIBE, {
+    dialogsActions.openDialog(DIALOGS.SUBSCRIBE, {
       title: '{$ partnersBlock.form.title $}',
       submitLabel: '{$ partnersBlock.form.submitLabel $}',
       firstFieldLabel: '{$ partnersBlock.form.fullName $}',
       secondFieldLabel: '{$ partnersBlock.form.companyName $}',
-      submit: (data) => store.dispatch(addPotentialPartner(data)),
+      submit: (data) => {
+        store.dispatch(partnersActions.addPartner(data));
+      },
     });
   }
 
   _partnerAddingChanged(newPartnerAdding, oldPartnerAdding) {
     if (oldPartnerAdding && !newPartnerAdding) {
       if (this.partnerAddingError) {
-        setDialogError(this.partnerAddingError);
+        store.dispatch(dialogsActions.setDialogError(DIALOGS.SUBSCRIBE));
       } else {
-        closeDialog();
-        showToast({ message: '{$ partnersBlock.toast $}' });
+        dialogsActions.closeDialog(DIALOGS.SUBSCRIBE);
+        toastActions.showToast({ message: '{$ partnersBlock.toast $}' });
       }
     }
   }
 }
+
+window.customElements.define(PartnersBlock.is, PartnersBlock);

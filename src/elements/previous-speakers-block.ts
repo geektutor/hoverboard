@@ -1,20 +1,13 @@
-import { Failure, Initialized, Pending, Success } from '@abraham/remotedata';
-import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState, store } from '../store';
-import { fetchPreviousSpeakersList } from '../store/previous-speakers/actions';
-import {
-  initialPreviousSpeakersState,
-  PreviousSpeakersState,
-} from '../store/previous-speakers/state';
+import { previousSpeakersActions } from '../redux/actions';
+import { store } from '../redux/store';
 import { randomOrder } from '../utils/functions';
 import './shared-styles';
 
-@customElement('previous-speakers-block')
-export class PreviousSpeakersBlock extends ReduxMixin(PolymerElement) {
+class PreviousSpeakersBlock extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -67,14 +60,6 @@ export class PreviousSpeakersBlock extends ReduxMixin(PolymerElement) {
         <h1 class="container-title">{$ previousSpeakersBlock.title $}</h1>
 
         <div class="speakers-wrapper">
-          <template is="dom-if" if="[[pending]]">
-            <p>Loading...</p>
-          </template>
-
-          <template is="dom-if" if="[[failure]]">
-            <p>Error loading previous speakers.</p>
-          </template>
-
           <template is="dom-repeat" items="[[speakers]]" as="speaker">
             <a
               class="speaker"
@@ -106,40 +91,54 @@ export class PreviousSpeakersBlock extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  previousSpeakers: PreviousSpeakersState = initialPreviousSpeakersState;
-  @property({ type: Object })
-  viewport: { isPhone?: boolean } = {};
-
-  @computed('previousSpeakers')
-  get pending() {
-    return this.previousSpeakers instanceof Pending;
+  static get is() {
+    return 'previous-speakers-block';
   }
 
-  @computed('previousSpeakers')
-  get failure() {
-    return this.previousSpeakers instanceof Failure;
+  private speakerRow = [];
+  private speakers = [];
+  private speakersRaw = [];
+  private speakersFetching = false;
+  private speakersFetchingError = {};
+  private viewport: { isPhone?: boolean } = {};
+
+  static get properties() {
+    return {
+      speakersRaw: {
+        type: Array,
+        observer: '_generateSpeakers',
+      },
+      speakersFetching: {
+        type: Boolean,
+      },
+      speakersFetchingError: {
+        type: Object,
+      },
+      viewport: {
+        type: Object,
+      },
+    };
   }
 
-  stateChanged(state: RootState) {
-    this.viewport = state.ui.viewport;
-    this.previousSpeakers = state.previousSpeakers;
+  stateChanged(state: import('../redux/store').State) {
+    return this.setProperties({
+      viewport: state.ui.viewport,
+      speakersRaw: state.previousSpeakers.list,
+      speakersFetching: state.previousSpeakers.fetching,
+      speakersFetchingError: state.previousSpeakers.fetchingError,
+    });
   }
 
   connectedCallback() {
     super.connectedCallback();
-    if (this.previousSpeakers instanceof Initialized) {
-      store.dispatch(fetchPreviousSpeakersList());
+    if (!this.speakersFetching && (!this.speakers || !this.speakers.length)) {
+      store.dispatch(previousSpeakersActions.fetchList());
     }
   }
 
-  @computed('previousSpeakers', 'viewport')
-  get speakers() {
-    if (this.previousSpeakers instanceof Success) {
-      const displayCount = this.viewport.isPhone ? 8 : 14;
-      return randomOrder(this.previousSpeakers.data).slice(0, displayCount);
-    } else {
-      return [];
-    }
+  _generateSpeakers(speakersRaw) {
+    this.set('speakers', randomOrder(speakersRaw).slice(0, this.viewport.isPhone ? 8 : 14));
   }
 }
+
+window.customElements.define(PreviousSpeakersBlock.is, PreviousSpeakersBlock);

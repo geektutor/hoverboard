@@ -1,10 +1,10 @@
-import * as settings from '@polymer/polymer/lib/utils/settings';
 import { error } from './console';
-import { showToast } from './store/toast/actions';
-import { TempAny } from './temp-any';
+import { toastActions } from './redux/actions';
+import * as settings from '@polymer/polymer/lib/utils/settings';
 
 const SW_URL = 'service-worker.js';
-const SCOPE = (settings as TempAny).rootPath;
+// TODO: Remove any
+const SCOPE = (settings as any).rootPath;
 
 export const registerServiceWorker = () => {
   if ('serviceWorker' in navigator) {
@@ -19,8 +19,8 @@ export const registerServiceWorker = () => {
           installingWorker.onstatechange = () => {
             switch (installingWorker.state) {
               case 'installed':
-                if (!navigator.serviceWorker.controller && showToast) {
-                  showToast({
+                if (!navigator.serviceWorker.controller && toastActions) {
+                  toastActions.showToast({
                     message: '{$ cachingComplete $}',
                   });
                 }
@@ -42,8 +42,8 @@ if (navigator.serviceWorker && navigator.serviceWorker.controller) {
         window.location.reload();
       };
 
-      if (showToast) {
-        showToast({
+      if (toastActions) {
+        toastActions.showToast({
           message: '{$ newVersionAvailable $}',
           action: {
             title: '{$ refresh $}',

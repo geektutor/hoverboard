@@ -2,11 +2,8 @@ import { IronOverlayBehavior } from '@polymer/iron-overlay-behavior';
 import { html, PolymerElement } from '@polymer/polymer';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
 import { ReduxMixin } from '../../mixins/redux-mixin';
-import { RootState } from '../../store';
-import { closeDialog, openDialog } from '../../store/dialogs/actions';
-import { DIALOGS } from '../../store/dialogs/types';
-import { mergeAccounts, signIn } from '../../store/user/actions';
-import { getProviderCompanyName } from '../../utils/providers';
+import { dialogsActions, helperActions, userActions } from '../../redux/actions';
+import { DIALOGS } from '../../redux/constants';
 import '../hoverboard-icons';
 import '../shared-styles';
 
@@ -113,7 +110,7 @@ class SigninDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Poly
     };
   }
 
-  stateChanged(state: RootState) {
+  stateChanged(state: import('../../redux/store').State) {
     this.setProperties({
       user: state.user,
     });
@@ -129,31 +126,31 @@ class SigninDialog extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Poly
   }
 
   _userChanged(user) {
-    closeDialog();
+    dialogsActions.closeDialog(DIALOGS.SIGNIN);
     if (!user.signedIn) {
       if (user.initialProviderId && user.pendingCredential) {
         this.isMergeState = true;
         this.email = user.email;
-        this.providerCompanyName = getProviderCompanyName(user.initialProviderId);
-        openDialog(DIALOGS.SIGNIN);
+        this.providerCompanyName = helperActions.getProviderCompanyName(user.initialProviderId);
+        dialogsActions.openDialog(DIALOGS.SIGNIN);
       }
     }
   }
 
   _mergeAccounts() {
-    mergeAccounts(this.user.initialProviderId, this.user.pendingCredential);
-    closeDialog();
+    userActions.mergeAccounts(this.user.initialProviderId, this.user.pendingCredential);
+    dialogsActions.closeDialog(DIALOGS.SIGNIN);
     this.isMergeState = false;
   }
 
   _close() {
     this.isMergeState = false;
-    closeDialog();
+    dialogsActions.closeDialog(DIALOGS.SIGNIN);
   }
 
   _signIn(event) {
     const providerUrl = event.target.getAttribute('provider-url');
-    signIn(providerUrl);
+    userActions.signIn(providerUrl);
   }
 }
 

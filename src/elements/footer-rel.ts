@@ -1,9 +1,7 @@
-import { customElement } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer';
 import './subscribe-form-footer';
 
-@customElement('footer-rel')
-export class FooterRel extends PolymerElement {
+class FooterRel extends PolymerElement {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment">
@@ -98,4 +96,10 @@ export class FooterRel extends PolymerElement {
       </div>
     `;
   }
+
+  static get is() {
+    return 'footer-rel';
+  }
 }
+
+window.customElements.define(FooterRel.is, FooterRel);

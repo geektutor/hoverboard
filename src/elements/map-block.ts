@@ -1,14 +1,11 @@
-import { customElement, property } from '@polymer/decorators';
 import '@polymer/google-map';
 import '@polymer/paper-icon-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState } from '../store';
 import './hoverboard-icons';
 import './shared-styles';
 
-@customElement('map-block')
-export class MapBlock extends ReduxMixin(PolymerElement) {
+class MapBlock extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -105,34 +102,49 @@ export class MapBlock extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  private viewport;
-  @property({ type: Object })
-  private option = {
-    disableDefaultUI: true,
-    disableDoubleClickZoom: true,
-    scrollwheel: false,
-    draggable: false,
-    styles: [
-      {
-        stylers: [{ lightness: 40 }, { visibility: 'on' }, { gamma: 0.9 }, { weight: 0.4 }],
-      },
-      {
-        elementType: 'labels',
-        stylers: [{ visibility: 'on' }],
-      },
-      {
-        featureType: 'water',
-        stylers: [{ color: '#5dc7ff' }],
-      },
-      {
-        featureType: 'road',
-        stylers: [{ visibility: 'off' }],
-      },
-    ],
-  };
+  static get is() {
+    return 'map-block';
+  }
 
-  stateChanged(state: RootState) {
-    this.viewport = state.ui.viewport;
+  static get properties() {
+    return {
+      viewport: {
+        type: Object,
+      },
+      options: {
+        type: Object,
+        value: {
+          disableDefaultUI: true,
+          disableDoubleClickZoom: true,
+          scrollwheel: false,
+          draggable: false,
+          styles: [
+            {
+              stylers: [{ lightness: 40 }, { visibility: 'on' }, { gamma: 0.9 }, { weight: 0.4 }],
+            },
+            {
+              elementType: 'labels',
+              stylers: [{ visibility: 'on' }],
+            },
+            {
+              featureType: 'water',
+              stylers: [{ color: '#5dc7ff' }],
+            },
+            {
+              featureType: 'road',
+              stylers: [{ visibility: 'off' }],
+            },
+          ],
+        },
+      },
+    };
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    return this.setProperties({
+      viewport: state.ui.viewport,
+    });
   }
 }
+
+window.customElements.define(MapBlock.is, MapBlock);
