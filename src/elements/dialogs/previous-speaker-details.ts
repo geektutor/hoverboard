@@ -7,10 +7,8 @@ import { html, PolymerElement } from '@polymer/polymer';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
 import 'plastic-image';
 import { ReduxMixin } from '../../mixins/redux-mixin';
-import { RootState } from '../../store';
-import { closeDialog } from '../../store/dialogs/actions';
-import { DIALOGS } from '../../store/dialogs/types';
-import { toggleVideoDialog } from '../../store/ui/actions';
+import { dialogsActions, uiActions } from '../../redux/actions';
+import { DIALOGS } from '../../redux/constants';
 import { getVariableColor } from '../../utils/functions';
 import '../shared-styles';
 import '../text-truncate';
@@ -147,14 +145,6 @@ class PreviousSpeakerDetails extends ReduxMixin(
 
   static get properties() {
     return {
-      opened: {
-        type: Boolean,
-        value: false,
-      },
-      data: {
-        type: Object,
-        observer: '_dataUpdate',
-      },
       speaker: {
         type: Object,
       },
@@ -164,7 +154,7 @@ class PreviousSpeakerDetails extends ReduxMixin(
     };
   }
 
-  stateChanged(state: RootState) {
+  stateChanged(state: import('../../redux/store').State) {
     this.setProperties({
       viewport: state.ui.viewport,
     });
@@ -175,14 +165,8 @@ class PreviousSpeakerDetails extends ReduxMixin(
     this.addEventListener('iron-overlay-canceled', this._close);
   }
 
-  _dataUpdate() {
-    if (this.data?.name === DIALOGS.PREVIOUS_SPEAKER) {
-      this.speaker = this.data.data;
-    }
-  }
-
   _close() {
-    closeDialog();
+    dialogsActions.closeDialog(DIALOGS.PREVIOUS_SPEAKER);
   }
 
   _getCloseBtnIcon(isLaptopViewport) {
@@ -190,20 +174,21 @@ class PreviousSpeakerDetails extends ReduxMixin(
   }
 
   _getSessions(sessions) {
-    return Object.keys(sessions)
-      .reduce((aggregator, year) => {
-        return aggregator.concat(
-          sessions[year].map((session) => {
-            return Object.assign({}, session, { year });
-          })
-        );
-      }, [])
-      .sort((a, b) => b.year - a.year);
+    return (
+      sessions &&
+      Object.keys(sessions)
+        .reduce((aggregator, year) => {
+          return aggregator.concat(
+            sessions[year].map((session) => Object.assign({}, session, { year }))
+          );
+        }, [])
+        .sort((a, b) => b.year - a.year)
+    );
   }
 
   _openVideo(event) {
     event.model.session &&
-      toggleVideoDialog({
+      uiActions.toggleVideoDialog({
         title: event.model.session.title,
         youtubeId: event.model.session.videoId,
         disableControls: true,

@@ -5,11 +5,7 @@ const fs = require('fs');
 
 const production = process.env.NODE_ENV && process.env.NODE_ENV === 'production';
 const development = !production;
-const buildTarget = process.env.BUILD_ENV
-  ? process.env.BUILD_ENV
-  : production
-  ? 'production'
-  : 'development';
+const buildTarget = process.env.BUILD_ENV ? process.env.BUILD_ENV : 'development';
 
 const getConfigPath = () => {
   const path = `./config/${buildTarget}.json`;
@@ -28,12 +24,15 @@ const getConfigPath = () => {
 const getData = () => {
   const settingsFiles = ['./data/resources.json', './data/settings.json', getConfigPath()];
 
-  return settingsFiles.reduce((currentData, path) => {
-    return {
-      ...currentData,
-      ...require(path),
-    };
-  }, {});
+  return settingsFiles.reduce(
+    (currentData, path) => {
+      return {
+        ...currentData,
+        ...require(path),
+      };
+    },
+    { loadDevelopmentScripts: development }
+  );
 };
 
 const data = getData();

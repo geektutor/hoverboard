@@ -1,8 +1,6 @@
-import { TempAny } from '../temp-any';
-
 declare global {
   interface Window {
-    ShadyCSS: TempAny;
+    ShadyCSS: any;
   }
 }
 
@@ -18,7 +16,7 @@ export const isEmpty = (array) => {
   return !array || !array.length;
 };
 
-export const randomOrder = <T>(array: T[]): T[] => {
+export const randomOrder = (array) => {
   return array.sort(() => 0.5 - Math.random());
 };
 
@@ -31,7 +29,8 @@ export const generateClassName = (value) => {
     : '';
 };
 
-export const getVariableColor = (element: TempAny, value: string, fallback?: string) => {
+// TODO: Remove any
+export const getVariableColor = (element: any, value: string, fallback?: string) => {
   const calculated = window.ShadyCSS
     ? window.ShadyCSS.getComputedStyleValue(element, `--${generateClassName(value)}`)
     : getComputedStyle(element, `--${generateClassName(value)}`);

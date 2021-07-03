@@ -1,17 +1,13 @@
-import { customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import '@polymer/marked-element';
 import '@polymer/paper-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState } from '../store';
-import { Viewport } from '../store/ui/types';
 import './hoverboard-icons';
 import './shared-styles';
 
-@customElement('about-organizer-block')
-export class AboutOrganizerBlock extends ReduxMixin(PolymerElement) {
+class AboutOrganizerBlock extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -102,10 +98,23 @@ export class AboutOrganizerBlock extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  private viewport: Viewport;
+  static get is() {
+    return 'about-organizer-block';
+  }
 
-  stateChanged(state: RootState) {
-    this.viewport = state.ui.viewport;
+  static get properties() {
+    return {
+      viewport: {
+        type: Object,
+      },
+    };
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    this.setProperties({
+      viewport: state.ui.viewport,
+    });
   }
 }
+
+customElements.define(AboutOrganizerBlock.is, AboutOrganizerBlock);

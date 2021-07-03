@@ -1,4 +1,3 @@
-import { Success } from '@abraham/remotedata';
 import '@polymer/app-layout/app-header-layout/app-header-layout';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
 import '@polymer/iron-icon';
@@ -8,28 +7,21 @@ import '@polymer/paper-fab';
 import { html, PolymerElement } from '@polymer/polymer';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class';
 import 'plastic-image';
-import '../../components/auth-required';
 import { ReduxMixin } from '../../mixins/redux-mixin';
-import { RootState, store } from '../../store';
-import { closeDialog, openDialog } from '../../store/dialogs/actions';
-import { DIALOGS } from '../../store/dialogs/types';
-import { setUserFeaturedSessions } from '../../store/featured-sessions/actions';
-import {
-  FeaturedSessionsState,
-  initialFeaturedSessionsState,
-} from '../../store/featured-sessions/state';
-import { showToast } from '../../store/toast/actions';
-import { toggleVideoDialog } from '../../store/ui/actions';
+import { SpeakersHoC } from '../../mixins/speakers-hoc';
+import { dialogsActions, sessionsActions, toastActions, uiActions } from '../../redux/actions';
+import { DIALOGS } from '../../redux/constants';
+import { store } from '../../redux/store';
 import { getVariableColor } from '../../utils/functions';
+import '../auth-required';
 import '../feedback-block';
 import '../shared-styles';
 import '../text-truncate';
 import './dialog-styles';
 
-const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-const ONE_MINUTE_MS = 60 * 1000;
-
-class SessionDetails extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], PolymerElement)) {
+class SessionDetails extends SpeakersHoC(
+  ReduxMixin(mixinBehaviors([IronOverlayBehavior], PolymerElement))
+) {
   static get template() {
     return html`
       <style include="shared-styles dialog-styles flex flex-alignment positioning">
@@ -92,7 +84,9 @@ class SessionDetails extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
           <h3 class="meta-info" hidden$="[[disabledSchedule]]">
             [[session.dateReadable]], [[session.startTime]] - [[session.endTime]]
           </h3>
-          <h3 class="meta-info" hidden$="[[disabledSchedule]]">[[session.track.title]]</h3>
+          <h3 class="meta-info" hidden$="[[disabledSchedule]]">
+            [[session.track.title]]
+          </h3>
           <h3 class="meta-info" hidden$="[[!session.complexity]]">
             {$ sessionDetails.contentLevel $}: [[session.complexity]]
           </h3>
@@ -159,10 +153,12 @@ class SessionDetails extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
 
             <auth-required hidden="[[!acceptingFeedback]]">
               <slot slot="prompt">{$ feedback.leaveFeedback $}</slot>
-              <feedback-block session-id="[[session.id]]"></feedback-block>
+              <feedback-block collection="sessions" db-item="[[session.id]]"></feedback-block>
             </auth-required>
 
-            <p hidden="[[acceptingFeedback]]">{$ feedback.sessionClosed $}</p>
+            <p hidden="[[acceptingFeedback]]">
+              {$ feedback.sessionClosed $}
+            </p>
           </div>
         </div>
       </app-header-layout>
@@ -180,10 +176,6 @@ class SessionDetails extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
         type: Boolean,
         value: () => JSON.parse('{$ disabledSchedule $}'),
       },
-      data: {
-        type: Object,
-        observer: '_dataUpdate',
-      },
       session: {
         type: Object,
         observer: '_sessionUpdate',
@@ -200,22 +192,17 @@ class SessionDetails extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
       },
       featuredSessions: {
         type: Object,
-        value: initialFeaturedSessionsState,
       },
       currentSpeaker: {
         type: String,
       },
-      opened: {
-        type: Boolean,
-        value: false,
-      },
     };
   }
 
-  stateChanged(state: RootState) {
+  stateChanged(state: import('../../redux/store').State) {
     super.stateChanged(state);
     this.setProperties({
-      featuredSessions: state.featuredSessions,
+      featuredSessions: state.sessions.featured,
       currentSpeaker: state.routing.subRoute,
       user: state.user,
       viewport: state.ui.viewport,
@@ -228,24 +215,25 @@ class SessionDetails extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
   }
 
   _close() {
-    closeDialog();
+    dialogsActions.closeDialog(DIALOGS.SESSION);
     history.back();
   }
 
-  _openSpeaker(event: Event & { currentTarget: HTMLElement }) {
-    const speakerId = event.currentTarget.getAttribute('speaker-id');
-    const speakerData = this.speakers.find((speaker) => speaker.id === speakerId);
+  _openSpeaker(e) {
+    const speakerId = e.currentTarget.getAttribute('speaker-id');
+    const speakerData = this.speakersMap[speakerId];
 
     if (!speakerData) return;
-    openDialog(DIALOGS.SPEAKER, speakerData);
+    dialogsActions.openDialog(DIALOGS.SPEAKER, speakerData);
+    dialogsActions.closeDialog(DIALOGS.SESSION);
   }
 
-  _getCloseBtnIcon(isLaptopViewport: boolean) {
+  _getCloseBtnIcon(isLaptopViewport) {
     return isLaptopViewport ? 'close' : 'arrow-left';
   }
 
   _openVideo() {
-    toggleVideoDialog({
+    uiActions.toggleVideoDialog({
       title: this.session.title,
       youtubeId: this.session.videoId,
       disableControls: true,
@@ -253,45 +241,43 @@ class SessionDetails extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
     });
   }
 
-  _toggleFeaturedSession(event: Event) {
+  _toggleFeaturedSession(event) {
     event.preventDefault();
     event.stopPropagation();
     if (!this.user.signedIn) {
-      showToast({
+      toastActions.showToast({
         message: '{$ schedule.saveSessionsSignedOut $}',
         action: {
           title: 'Sign in',
-          callback: () => openDialog(DIALOGS.SIGNIN),
+          callback: () => {
+            dialogsActions.openDialog(DIALOGS.SIGNIN);
+          },
         },
       });
       return;
     }
-    const sessions = Object.assign({}, this.featuredSessions.data, {
-      [this.session.id]: !this.featuredSessions.data[this.session.id] ? true : null,
+    const sessions = Object.assign({}, this.featuredSessions, {
+      [this.session.id]: !this.featuredSessions[this.session.id] ? true : null,
     });
 
-    store.dispatch(setUserFeaturedSessions(this.user.uid, sessions));
+    store.dispatch(sessionsActions.setUserFeaturedSessions(this.user.uid, sessions));
   }
 
-  _getFeaturedSessionIcon(featuredSessions: FeaturedSessionsState, sessionId?: string) {
-    return featuredSessions instanceof Success && featuredSessions.data[sessionId]
-      ? 'bookmark-check'
-      : 'bookmark-plus';
-  }
-
-  _dataUpdate() {
-    if (this.data?.name === DIALOGS.SESSION) {
-      this.session = this.data.data;
-    }
+  _getFeaturedSessionIcon(featuredSessions, sessionId) {
+    return featuredSessions && featuredSessions[sessionId] ? 'bookmark-check' : 'bookmark-plus';
   }
 
   _sessionUpdate() {
     const { day, startTime } = this.session;
     if (day && startTime) {
+      const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+      const ONE_MINUTE_MS = 60 * 1000;
       const now = new Date();
-      const currentTime = new Date(`${day} ${startTime}`).getTime();
-      const timezoneOffset = parseInt('{$ timezoneOffset $}') - now.getTimezoneOffset();
-      const convertedTimezoneDate = new Date(currentTime + timezoneOffset * ONE_MINUTE_MS);
+      const convertedTimezoneDate = new Date(
+        new Date(`${day} ${startTime}`).getTime() +
+          (parseInt('{$ timezoneOffset $}') - now.getTimezoneOffset()) * ONE_MINUTE_MS
+      );
+
       const diff = now.getTime() - convertedTimezoneDate.getTime();
       this.acceptingFeedback = diff > 0 && diff < ONE_WEEK_MS;
     } else {
@@ -299,7 +285,7 @@ class SessionDetails extends ReduxMixin(mixinBehaviors([IronOverlayBehavior], Po
     }
   }
 
-  getVariableColor(value: string) {
+  getVariableColor(value) {
     return getVariableColor(this, value);
   }
 }

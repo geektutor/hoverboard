@@ -1,19 +1,14 @@
-import { Success } from '@abraham/remotedata';
-import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-icon';
 import '@polymer/paper-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState, store } from '../store';
-import { openDialog } from '../store/dialogs/actions';
-import { DialogForm, DIALOGS } from '../store/dialogs/types';
-import { subscribe } from '../store/subscribe/actions';
-import { initialSubscribeState, SubscribeState } from '../store/subscribe/state';
+import { dialogsActions, subscribeActions } from '../redux/actions';
+import { DIALOGS } from '../redux/constants';
+import { store } from '../redux/store';
 import './hoverboard-icons';
 import './shared-styles';
 
-@customElement('subscribe-block')
-export class SubscribeBlock extends ReduxMixin(PolymerElement) {
+class SubscribeBlock extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment">
@@ -65,30 +60,55 @@ export class SubscribeBlock extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  subscribed: SubscribeState = initialSubscribeState;
+  static get is() {
+    return 'subscribe-block';
+  }
 
-  @property({ type: Object })
   private user: { signedIn?: boolean; email?: string; displayName?: string } = {};
-  @property({ type: Object })
   private viewport = {};
+  private subscribed = false;
+  private ctaIcon = 'arrow-right-circle';
+  private ctaLabel = '{$  subscribeBlock.callToAction.label $}';
 
-  stateChanged(state: RootState) {
-    this.subscribed = state.subscribed;
-    this.user = state.user;
-    this.viewport = state.ui.viewport;
+  static get properties() {
+    return {
+      user: {
+        type: Object,
+      },
+      viewport: {
+        type: Object,
+      },
+      subscribed: {
+        type: Boolean,
+        observer: '_handleSubscribed',
+      },
+      ctaIcon: {
+        type: String,
+        value: 'arrow-right-circle',
+      },
+      ctaLabel: {
+        type: String,
+        value: '{$  subscribeBlock.callToAction.label $}',
+      },
+    };
   }
 
-  @computed('subscribed')
-  get ctaIcon() {
-    return this.subscribed instanceof Success ? 'checked' : 'arrow-right-circle';
+  stateChanged(state: import('../redux/store').State) {
+    this.setProperties({
+      subscribed: state.subscribed,
+      user: state.user,
+      viewport: state.ui.viewport,
+    });
   }
 
-  @computed('subscribed')
-  get ctaLabel() {
-    return this.subscribed instanceof Success
-      ? '{$  subscribeBlock.subscribed $}'
-      : '{$  subscribeBlock.callToAction.label $}';
+  _handleSubscribed(subscribed) {
+    if (subscribed) {
+      this.ctaIcon = 'checked';
+      this.ctaLabel = '{$  subscribeBlock.subscribed $}';
+    } else {
+      this.ctaIcon = 'arrow-right-circle';
+      this.ctaLabel = '{$  subscribeBlock.callToAction.label $}';
+    }
   }
 
   _subscribe() {
@@ -108,19 +128,21 @@ export class SubscribeBlock extends ReduxMixin(PolymerElement) {
     if (this.user.email) {
       this._subscribeAction(Object.assign({}, { email: this.user.email }, userData));
     } else {
-      openDialog(DIALOGS.SUBSCRIBE, {
+      dialogsActions.openDialog(DIALOGS.SUBSCRIBE, {
         title: '{$ subscribeBlock.formTitle $}',
         submitLabel: ' {$ subscribeBlock.subscribe $}',
         firstFieldLabel: '{$ subscribeBlock.firstName $}',
         secondFieldLabel: '{$ subscribeBlock.lastName $}',
         firstFieldValue: userData.firstFieldValue,
         secondFieldValue: userData.secondFieldValue,
-        submit: (data: DialogForm) => this._subscribeAction(data),
+        submit: (data) => this._subscribeAction(data),
       });
     }
   }
 
-  _subscribeAction(data: DialogForm) {
-    store.dispatch(subscribe(data));
+  _subscribeAction(data) {
+    store.dispatch(subscribeActions.subscribe(data));
   }
 }
+
+window.customElements.define(SubscribeBlock.is, SubscribeBlock);

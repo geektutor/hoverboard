@@ -1,37 +1,26 @@
-import { Initialized, Success } from '@abraham/remotedata';
 import '@polymer/app-route/app-route';
-import { customElement, observe, property } from '@polymer/decorators';
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/marked-element';
 import '@polymer/paper-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import 'plastic-image';
-import { TempAny } from '../../functions/src/temp-any';
 import '../elements/posts-list';
 import '../elements/shared-styles';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { Post } from '../models/post';
-import { RootState, store } from '../store';
-import { fetchBlogList } from '../store/blog/actions';
-import { BlogState, initialBlogState } from '../store/blog/state';
+import { blogActions } from '../redux/actions';
+import { store } from '../redux/store';
 import { getDate } from '../utils/functions';
 
-@customElement('post-page')
-export class PostPage extends ReduxMixin(PolymerElement) {
-  @property({ type: Boolean })
+class PostPage extends ReduxMixin(PolymerElement) {
   active = false;
-  @property({ type: Object })
   route: object;
-  @property({ type: Object })
-  posts: BlogState = initialBlogState;
 
-  @property({ type: Object })
-  private post: Post;
-  @property({ type: Array })
-  private suggestedPosts: Post[] = [];
-  @property({ type: String })
-  private postContent: string;
-  @property({ type: Object })
+  private post = {};
+  private postsList = [];
+  private postsMap = {};
+  private postsFetching = false;
+  private postsFetchingError = {};
+  private viewport = {};
   private postData: { id?: string } = {};
 
   static get template() {
@@ -122,7 +111,9 @@ export class PostPage extends ReduxMixin(PolymerElement) {
         <marked-element class="post" markdown="[[postContent]]">
           <div slot="markdown-html"></div>
         </marked-element>
-        <div class="date">{$ blog.published $}: [[getDate(post.published)]]</div>
+        <div class="date">
+          {$ blog.published $}: [[getDate(post.published)]]
+        </div>
       </div>
 
       <div class="suggested-posts">
@@ -141,34 +132,77 @@ export class PostPage extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  stateChanged(state: RootState) {
-    this.posts = state.blog;
+  static get is() {
+    return 'post-page';
+  }
+
+  static get properties() {
+    return {
+      active: Boolean,
+      route: Object,
+      post: Object,
+      postsList: {
+        type: Array,
+      },
+      postsMap: {
+        type: Object,
+      },
+      postsFetching: {
+        type: Boolean,
+      },
+      postsFetchingError: {
+        type: Object,
+      },
+      viewport: {
+        type: Object,
+      },
+    };
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    this.setProperties({
+      viewport: state.ui.viewport,
+      postsList: state.blog.list,
+      postsMap: state.blog.obj,
+      postsFetching: state.blog.fetching,
+      postsFetchingError: state.blog.fetchingError,
+    });
+  }
+
+  static get observers() {
+    return ['_postDataObserver(postData.id, postsList)'];
   }
 
   connectedCallback() {
     super.connectedCallback();
-    if (this.posts instanceof Initialized) {
-      store.dispatch(fetchBlogList());
+    if (!this.postsFetching && (!this.postsList || !this.postsList.length)) {
+      store.dispatch(blogActions.fetchList());
     }
   }
 
-  handleMarkdownFileFetch(event: TempAny) {
+  handleMarkdownFileFetch(event) {
     if (event.detail.response) {
-      this.postContent = event.detail.response;
+      this.set('postContent', event.detail.response);
     }
   }
 
-  @observe('postData.id', 'posts')
-  _postDataObserver(postId: string, posts: BlogState) {
-    if (posts instanceof Success) {
-      const post = posts.data.find(({ id }) => id === postId);
-      this.post = post;
-      this.postContent = post?.content;
-      this.suggestedPosts = posts.data.filter(({ id }) => id !== postId).slice(0, 3);
+  _postDataObserver(postId, postsList) {
+    if (!this.postsList || !this.postsList.length || !this.postsMap[this.postData.id]) {
+      return;
     }
+
+    const post = this.postsMap[this.postData.id];
+    this.set('post', post);
+    this.set('postContent', post.content);
+    this.set(
+      'suggestedPosts',
+      this.postsList.filter((post) => post.id !== this.postData.id).slice(0, 3)
+    );
   }
 
-  getDate(date: Date) {
+  getDate(date) {
     return getDate(date);
   }
 }
+
+window.customElements.define(PostPage.is, PostPage);

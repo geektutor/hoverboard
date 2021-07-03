@@ -1,17 +1,10 @@
-import { Pending } from '@abraham/remotedata';
-import { computed, customElement, property } from '@polymer/decorators';
 import '@polymer/iron-location/iron-location';
 import { html, PolymerElement } from '@polymer/polymer';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState } from '../store';
-import { initialRoutingState, RoutingState } from '../store/routing/state';
-import { initialScheduleState, ScheduleState } from '../store/schedule/state';
-import { TempAny } from '../temp-any';
 import './content-loader';
 import './shared-styles';
 
-@customElement('header-bottom-toolbar')
-export class HeaderBottomToolbar extends ReduxMixin(PolymerElement) {
+class HeaderBottomToolbar extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -67,7 +60,7 @@ export class HeaderBottomToolbar extends ReduxMixin(PolymerElement) {
           items-count="{$ contentLoaders.schedule.itemsCount $}"
           layout
           horizontal
-          hidden$="[[!pending]]"
+          hidden$="[[contentLoaderVisibility]]"
         >
         </content-loader>
 
@@ -75,12 +68,12 @@ export class HeaderBottomToolbar extends ReduxMixin(PolymerElement) {
           class="nav-items"
           selected="[[route.subRoute]]"
           attr-for-selected="day"
-          hidden$="[[pending]]"
+          hidden$="[[!contentLoaderVisibility]]"
           scrollable
           hide-scroll-buttons
           noink
         >
-          <template is="dom-repeat" items="[[schedule.data]]" as="day">
+          <template is="dom-repeat" items="[[schedule]]" as="day">
             <paper-tab class="nav-item" day="[[day.date]]" link>
               <a href$="[[_addQueryParams(day.date, queryParams)]]" layout vertical center-center
                 >[[day.dateReadable]]</a
@@ -97,31 +90,54 @@ export class HeaderBottomToolbar extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  schedule: ScheduleState = initialScheduleState;
+  static get is() {
+    return 'header-bottom-toolbar';
+  }
 
-  @property({ type: Object })
-  private route: RoutingState = initialRoutingState;
-  @property({ type: Object })
+  private route: string;
+  private schedule = [];
+  private contentLoaderVisibility = false;
   private user = {};
 
-  stateChanged(state: RootState) {
-    this.route = state.routing;
-    this.schedule = state.schedule;
-    this.user = state.user;
+  static get properties() {
+    return {
+      route: String,
+      schedule: Array,
+      contentLoaderVisibility: {
+        type: Boolean,
+        value: false,
+      },
+      user: Object,
+    };
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    return this.setProperties({
+      route: state.routing,
+      schedule: state.schedule,
+      user: state.user,
+    });
+  }
+
+  static get observers() {
+    return ['_scheduleChanged(schedule)'];
   }
 
   connectedCallback() {
     super.connectedCallback();
-    (window as TempAny).HOVERBOARD.Elements.StickyHeaderToolbar = this;
+    // TODO: Remove any
+    (window as any).HOVERBOARD.Elements.StickyHeaderToolbar = this;
   }
 
-  @computed('schedule')
-  get pending() {
-    return this.schedule instanceof Pending;
+  _scheduleChanged(schedule) {
+    if (schedule.length) {
+      this.contentLoaderVisibility = true;
+    }
   }
 
   _addQueryParams(tab, queryParams) {
     return `/schedule/${tab}${queryParams ? `?${queryParams}` : ''}`;
   }
 }
+
+customElements.define(HeaderBottomToolbar.is, HeaderBottomToolbar);

@@ -1,23 +1,11 @@
-import { Success } from '@abraham/remotedata';
-import { computed, customElement, observe, property } from '@polymer/decorators';
-import { PaperMenuButton } from '@polymer/paper-menu-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState, store } from '../store';
-import { closeDialog, openDialog } from '../store/dialogs/actions';
-import { initialDialogState } from '../store/dialogs/state';
-import { DIALOGS } from '../store/dialogs/types';
-import { requestPermission, unsubscribe } from '../store/notifications/actions';
-import { NOTIFICATIONS_STATUS } from '../store/notifications/types';
-import { initialRoutingState, RoutingState } from '../store/routing/state';
-import { initialTicketsState, TicketsState } from '../store/tickets/state';
-import { signOut } from '../store/user/actions';
-import { TempAny } from '../temp-any';
-import { isDialogOpen } from '../utils/dialogs';
+import { dialogsActions, notificationsActions, userActions } from '../redux/actions';
+import { DIALOGS, NOTIFICATIONS_STATUS } from '../redux/constants';
+import { store } from '../redux/store';
 import './shared-styles';
 
-@customElement('header-toolbar')
-export class HeaderToolbar extends ReduxMixin(PolymerElement) {
+class HeaderToolbar extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -171,24 +159,7 @@ export class HeaderToolbar extends ReduxMixin(PolymerElement) {
           </paper-tab>
           {% endfor %}
 
-<<<<<<< HEAD
           
-=======
-          <paper-tab class="signin-tab" on-click="signIn" link hidden$="[[user.signedIn]]"
-            >{$ signIn $}</paper-tab
-          >
-
-          <a
-            href$="[[ticketUrl]]"
-            target="_blank"
-            rel="noopener noreferrer"
-            ga-on="click"
-            ga-event-category="ticket button"
-            ga-event-action="buy_click"
-          >
-            <paper-button class="buy-button" primary>{$ buyTicket $}</paper-button>
-          </a>
->>>>>>> 179c8ab633938ff0114be4f45bde98de22a667fd
         </paper-tabs>
 
         <paper-menu-button
@@ -237,46 +208,70 @@ export class HeaderToolbar extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  route: RoutingState = initialRoutingState;
-  @property({ type: Boolean, notify: true })
-  drawerOpened: boolean;
-  @property({ type: Object })
-  tickets: TicketsState = initialTicketsState;
+  static get is() {
+    return 'header-toolbar';
+  }
 
-  @property({ type: Object })
+  route: string;
+  drawerOpened: boolean;
+
   private viewport = {};
-  @property({ type: Object })
   private heroSettings = {};
-  @property({ type: Object })
-  private dialogs = initialDialogState;
-  @property({ type: Object })
+  private dialogs = { signin: { isOpened: false } };
   private notifications: { token?: string; status?: string } = {};
-  @property({ type: Object })
   private user = {};
-  @property({ type: Boolean, reflectToAttribute: true })
+  private tickets = { list: [] };
   private transparent = false;
 
-  stateChanged(state: RootState) {
-    this.dialogs = state.dialogs;
-    this.notifications = state.notifications;
-    this.route = state.routing;
-    this.user = state.user;
-    this.tickets = state.tickets;
-    this.heroSettings = state.ui.heroSettings;
-    this.viewport = state.ui.viewport;
+  static get properties() {
+    return {
+      route: String,
+      drawerOpened: {
+        type: Boolean,
+        notify: true,
+      },
+      viewport: Object,
+      heroSettings: {
+        type: Object,
+        observer: '_setToolbarSettings',
+      },
+      dialogs: Object,
+      notifications: Object,
+      user: Object,
+      tickets: Object,
+      transparent: {
+        type: Boolean,
+        reflectToAttribute: true,
+      },
+    };
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    return this.setProperties({
+      dialogs: state.dialogs,
+      notifications: state.notifications,
+      route: state.routing,
+      schedule: state.schedule,
+      user: state.user,
+      heroSettings: state.ui.heroSettings,
+      viewport: state.ui.viewport,
+    });
+  }
+
+  static get observers() {
+    return ['_authStatusChanged(user.signedIn)'];
   }
 
   connectedCallback() {
     super.connectedCallback();
-    (window as TempAny).HOVERBOARD.Elements.HeaderToolbar = this;
+    // TODO: Remove any
+    (window as any).HOVERBOARD.Elements.HeaderToolbar = this;
     this._onScroll = this._onScroll.bind(this);
     window.addEventListener('scroll', this._onScroll);
     this._onScroll();
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
     window.removeEventListener('scroll', this._onScroll);
   }
 
@@ -285,31 +280,30 @@ export class HeaderToolbar extends ReduxMixin(PolymerElement) {
   }
 
   signIn() {
-    openDialog(DIALOGS.SIGNIN);
+    dialogsActions.openDialog(DIALOGS.SIGNIN);
   }
 
-  _signOut() {
-    signOut();
+  signOut() {
+    userActions.signOut();
   }
 
   _onScroll() {
     this.transparent = document.documentElement.scrollTop === 0;
   }
 
-  @observe('user.signedIn')
-  _authStatusChanged(_signedIn) {
-    if (isDialogOpen(this.dialogs, DIALOGS.SIGNIN)) {
-      closeDialog();
+  _authStatusChanged(signedIn) {
+    if (this.dialogs.signin.isOpened) {
+      dialogsActions.closeDialog(DIALOGS.SIGNIN);
     }
   }
 
   _toggleNotifications() {
     this._closeNotificationMenu();
     if (this.notifications.status === NOTIFICATIONS_STATUS.GRANTED) {
-      store.dispatch(unsubscribe(this.notifications.token));
+      store.dispatch(notificationsActions.unsubscribe(this.notifications.token));
       return;
     }
-    store.dispatch(requestPermission());
+    store.dispatch(notificationsActions.requestPermission());
   }
 
   _getNotificationsIcon(status) {
@@ -326,24 +320,19 @@ export class HeaderToolbar extends ReduxMixin(PolymerElement) {
 
   _closeNotificationMenu() {
     // TODO: Remove type cast
-    (this.$.notificationsMenu as PaperMenuButton).close();
+    (this.$.notificationsMenu as import('@polymer/paper-menu-button').PaperMenuButton).close();
   }
 
   _isAccountIconHidden(userSignedIn, isTabletPlus) {
     return userSignedIn || isTabletPlus;
   }
 
-  @computed('tickets')
-  get ticketUrl() {
-    if (this.tickets instanceof Success && this.tickets.data.length > 0) {
-      const availableTicket = this.tickets.data.find((ticket) => ticket.available);
-      return (availableTicket || this.tickets.data[0]).url;
-    } else {
-      return '';
-    }
+  _getTicketUrl(tickets) {
+    if (!tickets.list.length) return '';
+    const availableTicket = tickets.list.filter((ticket) => ticket.available)[0];
+    return availableTicket ? availableTicket.url : tickets.list[0].url;
   }
 
-  @observe('heroSettings')
   _setToolbarSettings(settings) {
     if (!settings) return;
     this.updateStyles({
@@ -353,3 +342,5 @@ export class HeaderToolbar extends ReduxMixin(PolymerElement) {
     });
   }
 }
+
+customElements.define(HeaderToolbar.is, HeaderToolbar);

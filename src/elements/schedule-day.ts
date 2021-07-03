@@ -1,17 +1,10 @@
-import { customElement, observe, property } from '@polymer/decorators';
 import { html, PolymerElement } from '@polymer/polymer';
-import {
-  FeaturedSessionsState,
-  initialFeaturedSessionsState,
-} from '../store/featured-sessions/state';
-import { TempAny } from '../temp-any';
 import { generateClassName } from '../utils/functions';
 import { offsetTop, scrollToY } from '../utils/scrolling';
 import './session-element';
 import './shared-styles';
 
-@customElement('schedule-day')
-export class ScheduleDay extends PolymerElement {
+class ScheduleDay extends PolymerElement {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment positioning">
@@ -144,36 +137,49 @@ export class ScheduleDay extends PolymerElement {
     `;
   }
 
-  @property({ type: Boolean })
+  static get is() {
+    return 'schedule-day';
+  }
+
   private active = false;
-  @property({ type: Object })
   private day = {};
-  @property({ type: String })
   private name: string;
-  @property({ type: Object })
   private user = {};
-  @property({ type: Object })
-  private featuredSessions: FeaturedSessionsState = initialFeaturedSessionsState;
-  @property({ type: Boolean })
+  private featuredSessions = {};
   private onlyFeatured = false;
-  @property({ type: Object })
   private viewport: { isTabletPlus?: boolean } = {};
-  @property({ type: Object })
   private selectedFilters = {};
-  @property({ type: String })
   private queryParams: string;
 
-  @observe('active')
+  static get properties() {
+    return {
+      active: {
+        type: Boolean,
+        observer: '_pageVisible',
+      },
+      day: Object,
+      name: String,
+      user: Object,
+      featuredSessions: Object,
+      onlyFeatured: Boolean,
+      viewport: Object,
+      selectedFilters: Object,
+      queryParams: String,
+    };
+  }
+
   _pageVisible(active) {
     if (active && window.location.hash) {
       const selectedTime = window.location.hash.slice(1);
       if (selectedTime) {
         requestAnimationFrame(() => {
-          const Elements = (window as TempAny).HOVERBOARD.Elements;
+          // TODO: Remove anys
           const targetElement = this.shadowRoot.querySelector(`[id="${selectedTime}"]`);
           const offset = offsetTop(targetElement);
-          const toolbarHeight = Elements.HeaderToolbar.getBoundingClientRect().height - 1;
-          const stickyToolbarHeight = Elements.StickyHeaderToolbar.getBoundingClientRect().height;
+          const toolbarHeight =
+            (window as any).HOVERBOARD.Elements.HeaderToolbar.getBoundingClientRect().height - 1;
+          const stickyToolbarHeight = (window as any).HOVERBOARD.Elements.StickyHeaderToolbar.getBoundingClientRect()
+            .height;
           const additionalMargin = this.viewport.isTabletPlus ? 8 : 0;
           const scrollTargetY = offset - toolbarHeight - stickyToolbarHeight - additionalMargin;
           scrollToY(scrollTargetY, 1500, 'easeInOutSine');
@@ -221,3 +227,5 @@ export class ScheduleDay extends PolymerElement {
     });
   }
 }
+
+window.customElements.define(ScheduleDay.is, ScheduleDay);

@@ -1,14 +1,10 @@
-import { customElement, property } from '@polymer/decorators';
 import '@polymer/paper-toast/paper-toast';
 import { html, PolymerElement } from '@polymer/polymer';
 import { ReduxMixin } from '../mixins/redux-mixin';
-import { RootState } from '../store';
-import { hideToast } from '../store/toast/actions';
-import { TempAny } from '../temp-any';
+import { toastActions } from '../redux/actions';
 import './shared-styles';
 
-@customElement('toast-element')
-export class ToastElement extends ReduxMixin(PolymerElement) {
+class ToastElement extends ReduxMixin(PolymerElement) {
   static get template() {
     return html`
       <style include="shared-styles flex flex-alignment">
@@ -57,25 +53,42 @@ export class ToastElement extends ReduxMixin(PolymerElement) {
     `;
   }
 
-  @property({ type: Object })
-  private toast: { action?: { callback?: TempAny } } = {};
-  @property({ type: Object })
+  static get is() {
+    return 'toast-element';
+  }
+
+  private toast: { action?: { callback?: any } } = {};
   private viewport = {};
 
-  stateChanged(state: RootState) {
-    this.toast = state.toast;
-    this.viewport = state.ui.viewport;
+  static get properties() {
+    return {
+      toast: {
+        type: Object,
+      },
+      viewport: {
+        type: Object,
+      },
+    };
+  }
+
+  stateChanged(state: import('../redux/store').State) {
+    this.setProperties({
+      toast: state.toast,
+      viewport: state.ui.viewport,
+    });
   }
 
   _handleTap() {
     this.toast.action && this.toast.action.callback();
-    hideToast();
+    toastActions.hideToast();
   }
 
   _handleAction() {
     if (this.toast.action) {
       this.toast.action.callback();
-      hideToast();
+      toastActions.hideToast();
     }
   }
 }
+
+window.customElements.define(ToastElement.is, ToastElement);

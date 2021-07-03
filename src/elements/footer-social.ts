@@ -1,10 +1,8 @@
-import { customElement } from '@polymer/decorators';
 import '@polymer/paper-icon-button';
 import { html, PolymerElement } from '@polymer/polymer';
 import { share } from '../utils/share';
 
-@customElement('footer-social')
-export class FooterSocial extends PolymerElement {
+class FooterSocial extends PolymerElement {
   static get template() {
     return html`
     <style include="shared-styles flex flex-alignment">
@@ -210,7 +208,13 @@ export class FooterSocial extends PolymerElement {
 `;
   }
 
+  static get is() {
+    return 'footer-social';
+  }
+
   share(e) {
     return share(e);
   }
 }
+
+window.customElements.define(FooterSocial.is, FooterSocial);
